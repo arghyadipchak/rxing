@@ -91,10 +91,10 @@ impl LuminanceSource for BufferedImageLuminanceSource {
         pixels
     }
 
-    fn get_matrix(&self) -> Vec<u8> {
+    fn get_matrix(&self) -> Cow<'_, [u8]> {
         // if self.height == self.image.height() as usize && self.width == self.image.width() as usize
         // {
-        self.image.as_bytes().to_vec()
+        Cow::Borrowed(self.image.as_bytes())
         // }
         // let skip = self.image.width();
         // let row_skip = 0;

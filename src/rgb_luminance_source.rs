@@ -63,11 +63,11 @@ impl LuminanceSource for RGBLuminanceSource {
         unimplemented!()
     }
 
-    fn get_matrix(&self) -> Vec<u8> {
+    fn get_matrix(&self) -> Cow<'_, [u8]> {
         if self.invert {
-            self.invert_block_of_bytes(self.luminances.to_vec())
+            Cow::Owned(self.invert_block_of_bytes(self.luminances.to_vec()))
         } else {
-            self.luminances.to_vec()
+            Cow::Borrowed(&self.luminances)
         }
     }
 

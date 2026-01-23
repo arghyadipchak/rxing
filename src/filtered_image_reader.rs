@@ -30,7 +30,7 @@ impl<R: Reader> Reader for FilteredImageReader<R> {
     ) -> crate::common::Result<crate::RXingResult> {
         let pyramids = LumImagePyramid::new(
             Luma8LuminanceSource::new(
-                image.get_source().get_matrix(),
+                image.get_source().get_matrix().into_owned(),
                 image.get_source().get_width() as u32,
                 image.get_source().get_height() as u32,
             ),
