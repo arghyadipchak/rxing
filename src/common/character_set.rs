@@ -17,7 +17,7 @@
 use crate::Exceptions;
 use crate::common::Result;
 
-#[cfg(all(not(feature = "encoding_rs"), not(feature = "legacy_encoding")))]
+#[cfg(all(not(feature = "encoding_rs"), not(feature = "legacy_encoding"), not(feature = "no_character_set_support")))]
 compile_error!(
     "Either feature 'encoding_rs' or 'legacy_encoding' must be enabled for CharacterSet support."
 );
@@ -145,7 +145,7 @@ impl CharacterSet {
 }
 
 // MODERN IMPLEMENTATION (encoding_rs)
-#[cfg(feature = "encoding_rs")]
+#[cfg(all(feature = "encoding_rs", not(feature = "no_character_set_support")))]
 impl CharacterSet {
     fn get_encoding(&self) -> Option<&'static encoding_rs::Encoding> {
         match self {
@@ -388,7 +388,7 @@ impl CharacterSet {
 }
 
 // LEGACY IMPLEMENTATION (encoding)
-#[cfg(all(not(feature = "encoding_rs"), feature = "legacy_encoding"))]
+#[cfg(all(not(feature = "encoding_rs"), feature = "legacy_encoding", not(feature = "no_character_set_support")))]
 impl CharacterSet {
     fn get_base_encoder(&self) -> encoding::EncodingRef {
         let name = match self {
@@ -470,3 +470,20 @@ impl CharacterSet {
             .map_err(|e| Exceptions::format_with(e.to_string()))
     }
 }
+
+
+#[cfg(any(all(not(feature = "encoding_rs"), not(feature = "legacy_encoding")), feature = "no_character_set_support"))]
+impl CharacterSet {
+    pub fn encode(&self, _input: &str) -> Result<Vec<u8>> {
+        unimplemented!()
+    }
+
+    pub fn encode_replace(&self, _input: &str) -> Result<Vec<u8>> {
+        unimplemented!()
+    }
+
+    pub fn decode(&self, _input: &[u8]) -> Result<String> {
+        unimplemented!()
+    }
+}
+
