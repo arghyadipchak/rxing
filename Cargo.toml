@@ -64,6 +64,15 @@ image_formats = [
     "image/ff",
 ]
 
+#/// Enable barcode encoders
+encoders = []
+
+#/// Enable barcode decoders
+decoders = []
+
+#/// Disable all CharacterSet Support, this will break many barcode formats, but may be desirable for some use cases.
+no_character_set_support = []
+
 #/// Enable support for encoding_rs (modern, efficient)
 encoding_rs = ["dep:encoding_rs"]
 
