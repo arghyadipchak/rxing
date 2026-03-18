@@ -23,7 +23,7 @@ use crate::{
     point,
 };
 
-use super::{STAND_IN, UPCEANReader, upc_ean_reader};
+use super::{STAND_IN, UPCEANReader};
 
 /**
  * @see UPCEANExtension2Support

@@ -45,7 +45,7 @@ use super::{
 };
 
 #[cfg(feature = "oned")]
-use super::{ProductParsedResult, ProductResultParser};
+use super::ProductResultParser;
 
 /*
  * <p>Abstract class representing the result of decoding a barcode, as more than
