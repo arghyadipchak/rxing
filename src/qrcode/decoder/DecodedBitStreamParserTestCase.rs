@@ -17,7 +17,8 @@
 use crate::{
     DecodeHints,
     common::BitSourceBuilder,
-    qrcode::decoder::{ErrorCorrectionLevel, Version, decoded_bit_stream_parser},
+    qrcode::common::{ErrorCorrectionLevel, Version},
+    qrcode::decoder::decoded_bit_stream_parser,
 };
 
 /**

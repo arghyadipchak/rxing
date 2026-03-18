@@ -15,10 +15,7 @@
  */
 
 use crate::{
-    BarcodeFormat, Binarizer, Exceptions, RXingResult, RXingResultMetadataType,
-    RXingResultMetadataValue, Reader,
-    common::{BitArray, Result},
-    point,
+    BarcodeFormat, Binarizer, Exceptions, RXingResult, RXingResultMetadataType, RXingResultMetadataValue, Reader, common::{BitArray, Result}, oned::{oned_constants::upc_ean_shared::START_END_PATTERN, upcean_common::checkStandardUPCEANChecksum}, point
 };
 
 use super::{EANManufacturerOrgSupport, OneDReader, UPCEANExtensionSupport, one_d_reader};
@@ -215,7 +212,7 @@ pub trait UPCEANReader: OneDReader {
      * @throws FormatException if the string does not contain only digits
      */
     fn checkChecksum(&self, s: &str) -> Result<bool> {
-        self.checkStandardUPCEANChecksum(s)
+        checkStandardUPCEANChecksum(s)
     }
 
     fn decodeEnd(&self, row: &BitArray, endStart: usize) -> Result<[usize; 2]> {

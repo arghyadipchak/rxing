@@ -52,7 +52,7 @@ pub fn parse(result: &RXingResult) -> Option<ParsedClientResult> {
     if format == &BarcodeFormat::UPC_E && rawText.len() == 8 {
         // unimplemented!("UPCEReader is required to parse this");
         if cfg!(feature = "oned") {
-              crate::oned::convertUPCEtoUPCA(&rawText)?
+              crate::oned::upcean_common::convertUPCEtoUPCA(&rawText)?
          } else {
              None?
          }

@@ -6,7 +6,7 @@
 
 use crate::qrcode::{
     cpp_port::Type,
-    decoder::{Mode, Version},
+    common::{Mode, Version},
 };
 
 #[test]

@@ -20,7 +20,7 @@ use crate::{BarcodeFormat, Exceptions};
 use rxing_one_d_proc_derive::{EANReader, OneDReader};
 
 use super::UPCEANReader;
-use super::upc_ean_reader;
+use super::oned_constants::upc_ean_shared::*;
 
 /**
  * <p>Implements decoding of the EAN-8 format.</p>
@@ -52,7 +52,7 @@ impl UPCEANReader for EAN8Reader {
         let mut x = 0;
         while x < 4 && rowOffset < end {
             let bestMatch =
-                self.decodeDigit(row, &mut counters, rowOffset, &upc_ean_reader::L_PATTERNS)?;
+                self.decodeDigit(row, &mut counters, rowOffset, &L_PATTERNS)?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32).ok_or(Exceptions::PARSE)?);
 
@@ -62,13 +62,13 @@ impl UPCEANReader for EAN8Reader {
         }
 
         let middleRange =
-            self.findGuardPattern(row, rowOffset, true, &upc_ean_reader::MIDDLE_PATTERN)?;
+            self.findGuardPattern(row, rowOffset, true, &MIDDLE_PATTERN)?;
         rowOffset = middleRange[1];
 
         let mut x = 0;
         while x < 4 && rowOffset < end {
             let bestMatch =
-                self.decodeDigit(row, &mut counters, rowOffset, &upc_ean_reader::L_PATTERNS)?;
+                self.decodeDigit(row, &mut counters, rowOffset, &L_PATTERNS)?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32).ok_or(Exceptions::PARSE)?);
 

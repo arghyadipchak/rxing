@@ -6,7 +6,7 @@
 
 use crate::qrcode::{
     cpp_port::Type,
-    decoder::{ErrorCorrectionLevel, FormatInformation},
+    common::{ErrorCorrectionLevel, FormatInformation},
 };
 
 const MASKED_TEST_FORMAT_INFO: u32 = 0x2BED;

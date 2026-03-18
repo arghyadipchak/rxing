@@ -8,7 +8,7 @@ use crate::{
     },
     point, point_i,
     qrcode::{
-        decoder::{FormatInformation, Version, VersionRef},
+        common::{FormatInformation, Version, VersionRef},
         detector::QRCodeDetectorResult,
     },
 };

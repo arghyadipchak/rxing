@@ -17,7 +17,7 @@
 use crate::Exceptions;
 use crate::common::Result;
 
-use super::{ErrorCorrectionLevel, VersionRef};
+use crate::qrcode::common::{ErrorCorrectionLevel, VersionRef};
 
 /**
  * <p>Encapsulates a block of data within a QR Code. QR Codes may split their data into

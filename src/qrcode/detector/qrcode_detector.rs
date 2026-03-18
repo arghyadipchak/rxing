@@ -21,7 +21,7 @@ use crate::{
         SamplerControl,
     },
     point,
-    qrcode::decoder::Version,
+    qrcode::common::Version,
 };
 
 use super::{

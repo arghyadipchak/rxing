@@ -26,6 +26,8 @@ use super::{OneDReader, one_d_reader};
 
 use crate::{RXingResultMetadataType, RXingResultMetadataValue};
 
+use crate::oned::oned_constants::code_93::*;
+
 /**
  * <p>Decodes Code 93 barcodes.</p>
  *
@@ -159,7 +161,7 @@ impl Code93Reader {
                 theCounters[counterPosition] += 1;
             } else {
                 if counterPosition == patternLength - 1 {
-                    if Self::toPattern(theCounters) == Self::ASTERISK_ENCODING {
+                    if Self::toPattern(theCounters) == ASTERISK_ENCODING {
                         return Ok([patternStart, i]);
                     }
                     patternStart += (theCounters[0] + theCounters[1]) as usize;
@@ -200,9 +202,9 @@ impl Code93Reader {
     }
 
     fn patternToChar(pattern: u32) -> Result<char> {
-        for i in 0..Self::CHARACTER_ENCODINGS.len() {
-            if Self::CHARACTER_ENCODINGS[i] == pattern {
-                return Ok(Self::ALPHABET[i]);
+        for i in 0..CHARACTER_ENCODINGS.len() {
+            if CHARACTER_ENCODINGS[i] == pattern {
+                return Ok(ALPHABET[i]);
             }
         }
         Err(Exceptions::NOT_FOUND)
@@ -313,7 +315,7 @@ impl Code93Reader {
         let mut total = 0;
         for i in (0..checkPosition).rev() {
             total += weight
-                * Self::ALPHABET_STRING
+                * ALPHABET_STRING
                     .find(*result.get(i).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?)
                     .map_or_else(|| -1_i32, |v| v as i32);
             weight += 1;
@@ -324,7 +326,7 @@ impl Code93Reader {
         if *result
             .get(checkPosition)
             .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?
-            != Self::ALPHABET[(total as usize) % 47]
+            != ALPHABET[(total as usize) % 47]
         {
             Err(Exceptions::CHECKSUM)
         } else {
