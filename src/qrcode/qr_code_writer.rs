@@ -20,7 +20,7 @@ use crate::{
 };
 
 use super::{
-    decoder::ErrorCorrectionLevel,
+    common::ErrorCorrectionLevel,
     encoder::{QRCode, qrcode_encoder},
 };
 

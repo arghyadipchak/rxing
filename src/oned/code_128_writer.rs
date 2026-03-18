@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{OneDimensionalCodeWriter, code_128_reader};
+use super::{OneDimensionalCodeWriter, oned_constants::code_128};
 
 const CODE_START_A: usize = 103;
 const CODE_START_B: usize = 104;
@@ -283,7 +283,7 @@ fn encodeFast(contents: &str, forcedCodeSet: i32) -> Result<Vec<bool>> {
 
         // Get the pattern
         patterns.push(
-            code_128_reader::CODE_PATTERNS[patternIndex as usize]
+            code_128::CODE_PATTERNS[patternIndex as usize]
                 .iter()
                 .map(|x| *x as usize)
                 .collect(),
@@ -304,7 +304,7 @@ fn produceRXingResult(patterns: &mut Vec<Vec<usize>>, checkSum: usize) -> Vec<bo
     let mut checkSum = checkSum;
     checkSum %= 103;
     patterns.push(
-        code_128_reader::CODE_PATTERNS[checkSum]
+        code_128::CODE_PATTERNS[checkSum]
             .iter()
             .map(|x| *x as usize)
             .collect(),
@@ -312,7 +312,7 @@ fn produceRXingResult(patterns: &mut Vec<Vec<usize>>, checkSum: usize) -> Vec<bo
 
     // Append stop code
     patterns.push(
-        code_128_reader::CODE_PATTERNS[CODE_STOP]
+        code_128::CODE_PATTERNS[CODE_STOP]
             .iter()
             .map(|x| *x as usize)
             .collect(),
@@ -438,7 +438,7 @@ fn chooseCode(value: &str, start: usize, oldCode: usize) -> Option<usize> {
 //    minPath:Vec<Vec<Latch>>,
 // }
 mod MinimalEncoder {
-    use crate::{Exceptions, common::Result, oned::code_128_reader};
+    use crate::{Exceptions, common::Result, oned::oned_constants::code_128};
 
     use super::{
         CODE_CODE_A, CODE_CODE_B, CODE_CODE_C, CODE_FNC_1, CODE_FNC_2, CODE_FNC_3, CODE_FNC_4_A,
@@ -621,7 +621,7 @@ stuvwxyz{|}~\u{007F}\u{00FF}";
         position: usize,
     ) {
         patterns.push(
-            code_128_reader::CODE_PATTERNS[patternIndex]
+            code_128::CODE_PATTERNS[patternIndex]
                 .iter()
                 .map(|x| *x as usize)
                 .collect(),

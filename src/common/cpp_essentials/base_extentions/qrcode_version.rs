@@ -9,7 +9,7 @@ use num::Integer;
 
 use crate::common::{BitMatrix, Result};
 use crate::qrcode::cpp_port::Type;
-use crate::qrcode::decoder::{
+use crate::qrcode::common::{
     MICRO_VERSIONS, MODEL1_VERSIONS, RMQR_VERSIONS, VERSION_DECODE_INFO, VERSIONS, Version,
     VersionRef,
 };

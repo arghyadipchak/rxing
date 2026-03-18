@@ -27,4 +27,5 @@ pub mod decoded_bit_stream_parser;
 pub mod pdf_417_scanning_decoder;
 
 #[cfg(test)]
+#[cfg(all(feature = "decoders", feature = "encoders" ))]
 mod pdf_417_decoder_test_case;

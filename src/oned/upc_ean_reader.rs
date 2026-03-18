@@ -37,63 +37,6 @@ pub const MAX_AVG_VARIANCE: f32 = 0.48;
 pub const MAX_INDIVIDUAL_VARIANCE: f32 = 0.7;
 
 /**
- * Start/end guard pattern.
- */
-pub const START_END_PATTERN: [u32; 3] = [1, 1, 1];
-
-/**
- * Pattern marking the middle of a UPC/EAN pattern, separating the two halves.
- */
-pub const MIDDLE_PATTERN: [u32; 5] = [1, 1, 1, 1, 1];
-/**
- * end guard pattern.
- */
-pub const END_PATTERN: [u32; 6] = [1, 1, 1, 1, 1, 1];
-/**
- * "Odd", or "L" patterns used to encode UPC/EAN digits.
- */
-pub const L_PATTERNS: [[u32; 4]; 10] = [
-    [3, 2, 1, 1], // 0
-    [2, 2, 2, 1], // 1
-    [2, 1, 2, 2], // 2
-    [1, 4, 1, 1], // 3
-    [1, 1, 3, 2], // 4
-    [1, 2, 3, 1], // 5
-    [1, 1, 1, 4], // 6
-    [1, 3, 1, 2], // 7
-    [1, 2, 1, 3], // 8
-    [3, 1, 1, 2], // 9
-];
-
-/**
- * As above but also including the "even", or "G" patterns used to encode UPC/EAN digits.
- */
-pub const L_AND_G_PATTERNS: [[u32; 4]; 20] = {
-    let mut new_array = [[0_u32; 4]; 20];
-    let mut i = 0;
-    while i < 10 {
-        new_array[i] = L_PATTERNS[i];
-        i += 1;
-    }
-    let mut i = 10;
-    while i < 20 {
-        let widths = &L_PATTERNS[i - 10];
-        let mut reversedWidths = [0_u32; 4];
-        let mut j = 0;
-        while j < 4 {
-            reversedWidths[j] = widths[4 - j - 1];
-
-            j += 1;
-        }
-        new_array[i] = reversedWidths;
-
-        i += 1;
-    }
-
-    new_array
-};
-
-/**
  * <p>Encapsulates functionality and implementation that is common to UPC and EAN families
  * of one-dimensional barcodes.</p>
  *
@@ -273,65 +216,6 @@ pub trait UPCEANReader: OneDReader {
      */
     fn checkChecksum(&self, s: &str) -> Result<bool> {
         self.checkStandardUPCEANChecksum(s)
-    }
-
-    /**
-     * Computes the UPC/EAN checksum on a string of digits, and reports
-     * whether the checksum is correct or not.
-     *
-     * @param s string of digits to check
-     * @return true iff string of digits passes the UPC/EAN checksum algorithm
-     * @throws FormatException if the string does not contain only digits
-     */
-    fn checkStandardUPCEANChecksum(&self, s: &str) -> Result<bool> {
-        let s = s.chars().collect::<Vec<_>>();
-        let length = s.len();
-        if length == 0 {
-            return Ok(false);
-        }
-        let char_in_question = *s.get(length - 1).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?;
-        let check = char_in_question.is_ascii_digit();
-
-        let check_against = &s[..length - 1]; //s.subSequence(0, length - 1);
-        let calculated_checksum = self.getStandardUPCEANChecksum(check_against)?;
-
-        Ok(calculated_checksum
-            == if check {
-                char_in_question.to_digit(10).ok_or(Exceptions::PARSE)?
-            } else {
-                u32::MAX
-            })
-    }
-
-    fn getStandardUPCEANChecksum(&self, s: &[char]) -> Result<u32> {
-        let length = s.len();
-        let mut sum = 0;
-        let mut i = length as isize - 1;
-        while i >= 0 {
-            // for (int i = length - 1; i >= 0; i -= 2) {
-            let digit =
-                (*s.get(i as usize).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as i32) - ('0' as i32);
-            if !(0..=9).contains(&digit) {
-                return Err(Exceptions::FORMAT);
-            }
-            sum += digit;
-
-            i -= 2;
-        }
-        sum *= 3;
-        let mut i = length as isize - 2;
-        while i >= 0 {
-            // for (int i = length - 2; i >= 0; i -= 2) {
-            let digit =
-                (*s.get(i as usize).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as i32) - ('0' as i32);
-            if !(0..=9).contains(&digit) {
-                return Err(Exceptions::FORMAT);
-            }
-            sum += digit;
-
-            i -= 2;
-        }
-        Ok(((1000 - sum) % 10) as u32)
     }
 
     fn decodeEnd(&self, row: &BitArray, endStart: usize) -> Result<[usize; 2]> {

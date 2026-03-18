@@ -4,24 +4,34 @@ use std::{collections::HashSet, io::Write, path::PathBuf};
 use image::DynamicImage;
 
 use crate::{
-    BarcodeFormat, BinaryBitmap, DecodeHints, Exceptions, FilteredImageReader,
-    Luma8LuminanceSource, RXingResult, Reader,
-    common::{BitMatrix, HybridBinarizer, Result},
-};
-use crate::{MultiFormatReader, MultiUseMultiFormatReader};
+    BarcodeFormat,  Exceptions,
     
-#[cfg(feature = "multi_barcode_readers")]
+    common::{BitMatrix, Result},
+};
+
+#[cfg(feature="decoders")]
+use crate::{
+    BinaryBitmap, DecodeHints, Luma8LuminanceSource, RXingResult, Reader, common::HybridBinarizer
+};
+
+#[cfg(feature="decoders")]
+use crate::{MultiFormatReader, MultiUseMultiFormatReader};
+
+#[cfg(feature = "decoders")]
+use crate::FilteredImageReader;
+    
+#[cfg(all(feature = "multi_barcode_readers", feature = "decoders"))]
 use crate::multi::{GenericMultipleBarcodeReader, MultipleBarcodeReader};
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 use crate::BufferedImageLuminanceSource;
 
-#[cfg(feature = "svg_read")]
+#[cfg(all(feature = "svg_read", feature = "decoders"))]
 pub fn detect_in_svg(file_name: &str, barcode_type: Option<BarcodeFormat>) -> Result<RXingResult> {
     detect_in_svg_with_hints(file_name, barcode_type, &mut DecodeHints::default())
 }
 
-#[cfg(feature = "svg_read")]
+#[cfg(all(feature = "svg_read", feature = "decoders"))]
 pub fn detect_in_svg_with_hints(
     file_name: &str,
     barcode_type: Option<BarcodeFormat>,
@@ -59,12 +69,12 @@ pub fn detect_in_svg_with_hints(
     )
 }
 
-#[cfg(all(feature = "svg_read", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "svg_read", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_svg(file_name: &str) -> Result<Vec<RXingResult>> {
     detect_multiple_in_svg_with_hints(file_name, &mut DecodeHints::default())
 }
 
-#[cfg(all(feature = "svg_read", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "svg_read", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_svg_with_hints(
     file_name: &str,
     hints: &mut DecodeHints,
@@ -98,12 +108,12 @@ pub fn detect_multiple_in_svg_with_hints(
     )
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub fn detect_in_file(file_name: &str, barcode_type: Option<BarcodeFormat>) -> Result<RXingResult> {
     detect_in_file_with_hints(file_name, barcode_type, &mut DecodeHints::default())
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub fn detect_in_file_with_hints(
     file_name: &str,
     barcode_type: Option<BarcodeFormat>,
@@ -117,12 +127,12 @@ pub fn detect_in_file_with_hints(
     detect_in_image_with_hints(img, barcode_type, hints)
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub fn detect_in_buffer(buffer: &[u8], barcode_type: Option<BarcodeFormat>) -> Result<RXingResult> {
     detect_in_buffer_with_hints(buffer, barcode_type, &mut DecodeHints::default())
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub fn detect_in_buffer_with_hints(
     buffer: &[u8],
     barcode_type: Option<BarcodeFormat>,
@@ -136,7 +146,7 @@ pub fn detect_in_buffer_with_hints(
     detect_in_image_with_hints(img, barcode_type, hints)
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub fn detect_in_image(
     img: DynamicImage,
     barcode_type: Option<BarcodeFormat>,
@@ -144,7 +154,7 @@ pub fn detect_in_image(
     detect_in_image_with_hints(img, barcode_type, &mut DecodeHints::default())
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub fn detect_in_image_with_hints(
     img: DynamicImage,
     barcode_type: Option<BarcodeFormat>,
@@ -164,12 +174,12 @@ pub fn detect_in_image_with_hints(
     )
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_file(file_name: &str) -> Result<Vec<RXingResult>> {
     detect_multiple_in_file_with_hints(file_name, &mut DecodeHints::default())
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_file_with_hints(
     file_name: &str,
     hints: &mut DecodeHints,
@@ -179,12 +189,12 @@ pub fn detect_multiple_in_file_with_hints(
     detect_multiple_in_image_with_hints(img, hints)
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_buffer(buffer: &[u8]) -> Result<Vec<RXingResult>> {
     detect_multiple_in_buffer_with_hints(buffer, &mut DecodeHints::default())
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_buffer_with_hints(
     buffer: &[u8],
     hints: &mut DecodeHints,
@@ -194,12 +204,12 @@ pub fn detect_multiple_in_buffer_with_hints(
     detect_multiple_in_image_with_hints(img, hints)
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_image(img: DynamicImage) -> Result<Vec<RXingResult>> {
     detect_multiple_in_image_with_hints(img, &mut DecodeHints::default())
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_image_with_hints(
     img: DynamicImage,
     hints: &mut DecodeHints,
@@ -215,6 +225,7 @@ pub fn detect_multiple_in_image_with_hints(
     )
 }
 
+#[cfg(feature = "decoders")]
 pub fn detect_in_luma(
     luma: Vec<u8>,
     width: u32,
@@ -230,6 +241,7 @@ pub fn detect_in_luma(
     )
 }
 
+#[cfg(feature = "decoders")]
 pub fn detect_in_luma_with_hints(
     luma: Vec<u8>,
     width: u32,
@@ -253,6 +265,7 @@ pub fn detect_in_luma_with_hints(
     )
 }
 
+#[cfg(feature = "decoders")]
 pub fn detect_in_luma_filtered(
     luma: Vec<u8>,
     width: u32,
@@ -268,6 +281,7 @@ pub fn detect_in_luma_filtered(
     )
 }
 
+#[cfg(feature = "decoders")]
 pub fn detect_in_luma_filtered_with_hints(
     luma: Vec<u8>,
     width: u32,
@@ -291,12 +305,12 @@ pub fn detect_in_luma_filtered_with_hints(
     )
 }
 
-#[cfg(feature = "multi_barcode_readers")]
+#[cfg(all(feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_luma(luma: Vec<u8>, width: u32, height: u32) -> Result<Vec<RXingResult>> {
     detect_multiple_in_luma_with_hints(luma, width, height, &mut DecodeHints::default())
 }
 
-#[cfg(feature = "multi_barcode_readers")]
+#[cfg(all(feature = "multi_barcode_readers", feature = "decoders"))]
 pub fn detect_multiple_in_luma_with_hints(
     luma: Vec<u8>,
     width: u32,

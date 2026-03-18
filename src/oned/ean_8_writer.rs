@@ -19,10 +19,10 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::{
     BarcodeFormat,
     common::Result,
-    oned::{EAN8Reader, UPCEANReader},
+    oned::upcean_common,
 };
 
-use super::{OneDimensionalCodeWriter, UPCEANWriter, upc_ean_reader};
+use super::{OneDimensionalCodeWriter, UPCEANWriter, oned_constants::upc_ean_shared};
 
 /**
  * This object renders an EAN8 code as a {@link BitMatrix}.
@@ -45,18 +45,17 @@ impl OneDimensionalCodeWriter for EAN8Writer {
      */
     fn encode_oned(&self, contents: &str) -> Result<Vec<bool>> {
         let length = contents.chars().count();
-        let reader = EAN8Reader;
         let mut contents = contents.to_owned();
         match length {
             7 => {
                 // No check digit present, calculate it and add it
                 let check =
-                    reader.getStandardUPCEANChecksum(&contents.chars().collect::<Vec<_>>())?;
+                    upcean_common::getStandardUPCEANChecksum(&contents.chars().collect::<Vec<_>>())?;
 
                 contents.push_str(&check.to_string());
             }
             8 => {
-                if !EAN8Reader.checkStandardUPCEANChecksum(&contents)? {
+                if !upcean_common::checkStandardUPCEANChecksum(&contents)? {
                     return Err(Exceptions::illegal_argument_with(
                         "Contents do not pass checksum",
                     ));
@@ -74,7 +73,7 @@ impl OneDimensionalCodeWriter for EAN8Writer {
         let mut result = [false; CODE_WIDTH];
         let mut pos = 0;
 
-        pos += Self::appendPattern(&mut result, pos, &upc_ean_reader::START_END_PATTERN, true)
+        pos += Self::appendPattern(&mut result, pos, &upc_ean_shared::START_END_PATTERN, true)
             as usize;
 
         for i in 0..=3 {
@@ -85,12 +84,12 @@ impl OneDimensionalCodeWriter for EAN8Writer {
                 .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?
                 .to_digit(10)
                 .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as usize;
-            pos += Self::appendPattern(&mut result, pos, &upc_ean_reader::L_PATTERNS[digit], false)
+            pos += Self::appendPattern(&mut result, pos, &upc_ean_shared::L_PATTERNS[digit], false)
                 as usize;
         }
 
         pos +=
-            Self::appendPattern(&mut result, pos, &upc_ean_reader::MIDDLE_PATTERN, false) as usize;
+            Self::appendPattern(&mut result, pos, &upc_ean_shared::MIDDLE_PATTERN, false) as usize;
 
         for i in 4..=7 {
             // for (int i = 4; i <= 7; i++) {
@@ -100,10 +99,10 @@ impl OneDimensionalCodeWriter for EAN8Writer {
                 .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?
                 .to_digit(10)
                 .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as usize;
-            pos += Self::appendPattern(&mut result, pos, &upc_ean_reader::L_PATTERNS[digit], true)
+            pos += Self::appendPattern(&mut result, pos, &upc_ean_shared::L_PATTERNS[digit], true)
                 as usize;
         }
-        Self::appendPattern(&mut result, pos, &upc_ean_reader::START_END_PATTERN, true);
+        Self::appendPattern(&mut result, pos, &upc_ean_shared::START_END_PATTERN, true);
 
         Ok(result.to_vec())
     }

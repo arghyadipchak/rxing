@@ -16,7 +16,7 @@
 
 use crate::{
     common::Result,
-    qrcode::decoder::{ErrorCorrectionLevel, Version},
+    qrcode::common::{ErrorCorrectionLevel, Version},
 };
 
 /**

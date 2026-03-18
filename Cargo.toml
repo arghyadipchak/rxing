@@ -42,7 +42,8 @@ rand = "0.10"
 criterion = "0.7"
 
 [features]
-default = ["image", "client_support", "image_formats", "serde", "encoding_rs", "encoders", "decoders", "full_barcode_format_support", "multi_barcode_readers"]
+default = ["image", "client_support", "image_formats", "serde", "encoding_rs", "encoders", "full_barcode_format_support", "multi_barcode_readers"]
+
 #/// Enable features required for image manipulation and reading.
 image = ["dep:image", "dep:imageproc"]
 image_formats = [
@@ -101,7 +102,7 @@ oned = ["dep:rxing-one-d-proc-derive"]
 #//// Enable support for PDF417 barcodes
 pdf417 = []
 
-#/// Enable support multiformat barcode reading
+#/// Enable support for multiple barcode reading
 multi_barcode_readers =  []
 
 #/// Enable support for encoding_rs (modern, efficient)

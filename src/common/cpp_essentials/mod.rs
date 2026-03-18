@@ -3,6 +3,7 @@ mod base_extentions;
 pub mod bitmatrix_cursor;
 pub mod bitmatrix_cursor_trait;
 pub mod concentric_finder;
+#[cfg(feature = "decoders")]
 pub mod decoder_result;
 pub mod direction;
 pub mod dm_regression_line;
@@ -19,6 +20,7 @@ pub mod value;
 
 pub use bitmatrix_cursor_trait::*;
 pub use concentric_finder::*;
+#[cfg(feature = "decoders")]
 pub use decoder_result::*;
 pub use direction::*;
 pub use dm_regression_line::*;

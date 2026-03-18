@@ -15,7 +15,7 @@
  */
 
 use crate::qrcode::{
-    decoder::{ErrorCorrectionLevel, Mode, Version},
+    common::{ErrorCorrectionLevel, Mode, Version},
 };
 
 use super::QRCode;

@@ -19,10 +19,10 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::{
     BarcodeFormat,
     common::Result,
-    oned::{EAN13Reader, upc_ean_reader},
+    oned::{upcean_common, oned_constants::{ean_13, upc_ean_shared}},
 };
 
-use super::{OneDimensionalCodeWriter, UPCEANReader, UPCEANWriter};
+use super::{OneDimensionalCodeWriter, UPCEANWriter};
 
 /**
  * This object renders an EAN13 code as a {@link BitMatrix}.
@@ -35,18 +35,17 @@ impl UPCEANWriter for EAN13Writer {}
 
 impl OneDimensionalCodeWriter for EAN13Writer {
     fn encode_oned(&self, contents: &str) -> Result<Vec<bool>> {
-        let reader: EAN13Reader = EAN13Reader;
         let mut contents = contents.to_owned();
         let length = contents.chars().count();
         match length {
             12 => {
                 // No check digit present, calculate it and add it
                 let check =
-                    reader.getStandardUPCEANChecksum(&contents.chars().collect::<Vec<_>>())?;
+                    upcean_common::getStandardUPCEANChecksum(&contents.chars().collect::<Vec<_>>())?;
                 contents.push_str(&check.to_string());
             }
             13 => {
-                if !reader.checkStandardUPCEANChecksum(&contents)? {
+                if !upcean_common::checkStandardUPCEANChecksum(&contents)? {
                     return Err(Exceptions::illegal_argument_with(
                         "Contents do not pass checksum",
                     ));
@@ -67,12 +66,12 @@ impl OneDimensionalCodeWriter for EAN13Writer {
             .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?
             .to_digit(10)
             .ok_or(Exceptions::PARSE)? as usize;
-        let parities = EAN13Reader::FIRST_DIGIT_ENCODINGS[firstDigit];
+        let parities = ean_13::FIRST_DIGIT_ENCODINGS[firstDigit];
         let mut result = [false; CODE_WIDTH];
         let mut pos = 0;
 
         pos +=
-            EAN13Writer::appendPattern(&mut result, pos, &upc_ean_reader::START_END_PATTERN, true)
+            EAN13Writer::appendPattern(&mut result, pos, &upc_ean_shared::START_END_PATTERN, true)
                 as usize;
 
         // See EAN13Reader for a description of how the first digit & left bars are encoded
@@ -90,12 +89,12 @@ impl OneDimensionalCodeWriter for EAN13Writer {
             pos += EAN13Writer::appendPattern(
                 &mut result,
                 pos,
-                &upc_ean_reader::L_AND_G_PATTERNS[digit],
+                &upc_ean_shared::L_AND_G_PATTERNS[digit],
                 false,
             ) as usize;
         }
 
-        pos += EAN13Writer::appendPattern(&mut result, pos, &upc_ean_reader::MIDDLE_PATTERN, false)
+        pos += EAN13Writer::appendPattern(&mut result, pos, &upc_ean_shared::MIDDLE_PATTERN, false)
             as usize;
 
         for i in 7..=12 {
@@ -109,11 +108,11 @@ impl OneDimensionalCodeWriter for EAN13Writer {
             pos += EAN13Writer::appendPattern(
                 &mut result,
                 pos,
-                &upc_ean_reader::L_PATTERNS[digit],
+                &upc_ean_shared::L_PATTERNS[digit],
                 true,
             ) as usize;
         }
-        EAN13Writer::appendPattern(&mut result, pos, &upc_ean_reader::START_END_PATTERN, true);
+        EAN13Writer::appendPattern(&mut result, pos, &upc_ean_shared::START_END_PATTERN, true);
 
         Ok(result.to_vec())
     }

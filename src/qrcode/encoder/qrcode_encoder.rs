@@ -22,7 +22,7 @@ use crate::{
         BitArray, BitFieldBaseType, CharacterSet, Eci, Result,
         reedsolomon::{PredefinedGenericGF, ReedSolomonEncoder, get_predefined_genericgf},
     },
-    qrcode::decoder::{ErrorCorrectionLevel, Mode, Version, VersionRef},
+    qrcode::common::{ErrorCorrectionLevel, Mode, Version, VersionRef},
 };
 
 use super::{BlockPair, MinimalEncoder, QRCode, mask_util, matrix_util};

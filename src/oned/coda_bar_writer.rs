@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{CodaBarReader, OneDimensionalCodeWriter};
+use super::{oned_constants::coda_bar, OneDimensionalCodeWriter};
 
 const START_END_CHARS: [char; 4] = ['A', 'B', 'C', 'D'];
 const ALT_START_END_CHARS: [char; 4] = ['T', 'N', '*', 'E'];
@@ -119,10 +119,10 @@ impl OneDimensionalCodeWriter for CodaBarWriter {
                 }
             }
             let mut code = 0;
-            for i in 0..CodaBarReader::ALPHABET.len() {
+            for i in 0..coda_bar::ALPHABET.len() {
                 // Found any, because I checked above.
-                if c == CodaBarReader::ALPHABET[i] {
-                    code = CodaBarReader::CHARACTER_ENCODINGS[i];
+                if c == coda_bar::ALPHABET[i] {
+                    code = coda_bar::CHARACTER_ENCODINGS[i];
                     break;
                 }
             }
