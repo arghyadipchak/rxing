@@ -23,9 +23,6 @@ use crate::{
     },
 };
 
-#[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
-use crate::{DecodeHintType, DecodeHintValue};
-
 use crate::qrcode::common::{ErrorCorrectionLevel, Mode, VersionRef};
 
 /*
@@ -270,9 +267,7 @@ fn decodeKanjiSegment(
     };
 
     #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
-    let encoder = if let Some(DecodeHintValue::QrAssumeSpecConformInput(true)) =
-        hints.get(&DecodeHintType::QR_ASSUME_SPEC_CONFORM_INPUT)
-    {
+    let encoder = if let Some(true) = hints.QrAssumeSpecConformInput.as_ref() {
         currentCharacterSetECI.unwrap_or(CharacterSet::ISO8859_1)
     } else {
         CharacterSet::Shift_JIS
@@ -314,12 +309,10 @@ fn decodeByteSegment(
         }
 
         #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
-        if let Some(DecodeHintValue::QrAssumeSpecConformInput(true)) =
-            hints.get(&DecodeHintType::QR_ASSUME_SPEC_CONFORM_INPUT)
-        {
+        if let Some(true) = hints.QrAssumeSpecConformInput.as_ref() {
             CharacterSet::ISO8859_1
         } else {
-            StringUtils::guessCharset(&readBytes, hints).ok_or(Exceptions::ILLEGAL_STATE)?
+            string_utils::guessCharset(&readBytes, hints).ok_or(Exceptions::ILLEGAL_STATE)?
         }
     } else {
         currentCharacterSetECI.ok_or(Exceptions::ILLEGAL_STATE)?
