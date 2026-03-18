@@ -26,7 +26,7 @@ use crate::{
 #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
 use crate::{DecodeHintType, DecodeHintValue};
 
-use super::{ErrorCorrectionLevel, Mode, VersionRef};
+use crate::qrcode::common::{ErrorCorrectionLevel, Mode, VersionRef};
 
 /*
  * <p>QR Codes can encode text as bits in one of several modes, and can use multiple modes

@@ -7,7 +7,7 @@
 use crate::{
     Exceptions,
     common::{BitMatrix, Result},
-    qrcode::decoder::{ErrorCorrectionLevel, FormatInformation, Version, VersionRef},
+    qrcode::common::{ErrorCorrectionLevel, FormatInformation, Version, VersionRef},
 };
 
 use super::{Type, data_mask::GetDataMaskBit};

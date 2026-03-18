@@ -15,7 +15,8 @@ use crate::common::{
 use crate::qrcode::cpp_port::bitmatrix_parser::{
     ReadCodewords, ReadFormatInformation, ReadVersion,
 };
-use crate::qrcode::decoder::{DataBlock, ErrorCorrectionLevel, Mode, Version};
+use crate::qrcode::decoder::{DataBlock};
+use crate::qrcode::common::{ErrorCorrectionLevel, Mode, Version};
 
 /**
 * <p>Given data and error-correction codewords received, possibly corrupted by errors, attempts to

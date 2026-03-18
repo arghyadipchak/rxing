@@ -26,6 +26,8 @@ use crate::DecodeHints;
 
 use crate::{RXingResultMetadataType, RXingResultMetadataValue};
 
+use crate::oned::oned_constants::code_39::*;
+
 /**
  * <p>Decodes Code 39 barcodes. Supports "Full ASCII Code 39" if USE_CODE_39_EXTENDED_MODE is set.</p>
  *
@@ -99,7 +101,7 @@ impl OneDReader for Code39Reader {
             let max = cached_row_result.len() - 1;
             let mut total = 0;
             for i in 0..max {
-                if let Some(pos) = Self::ALPHABET_STRING.find(
+                if let Some(pos) = ALPHABET_STRING.find(
                     *cached_row_result
                         .get(i)
                         .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?,
@@ -153,7 +155,7 @@ impl OneDReader for Code39Reader {
 }
 
 pub static C39R_CACHED_ALPHABET_STRING: Lazy<Vec<char>> =
-    Lazy::new(|| Code39Reader::ALPHABET_STRING.chars().collect());
+    Lazy::new(|| ALPHABET_STRING.chars().collect());
 
 impl Code39Reader {
     /**
@@ -213,7 +215,7 @@ impl Code39Reader {
             } else {
                 if counterPosition == patternLength - 1 {
                     // Look for whitespace before start pattern, >= 50% of width of start pattern
-                    if Self::toNarrowWidePattern(counters) == (Self::ASTERISK_ENCODING as i32)
+                    if Self::toNarrowWidePattern(counters) == (ASTERISK_ENCODING as i32)
                         && row.isRange(
                             0.max(
                                 patternStart as isize - ((i as isize - patternStart as isize) / 2),
@@ -294,15 +296,15 @@ impl Code39Reader {
     }
 
     fn patternToChar(pattern: u32) -> Result<char> {
-        for i in 0..Self::CHARACTER_ENCODINGS.len() {
-            if Self::CHARACTER_ENCODINGS[i] == pattern {
+        for i in 0..CHARACTER_ENCODINGS.len() {
+            if CHARACTER_ENCODINGS[i] == pattern {
                 return C39R_CACHED_ALPHABET_STRING
                     .get(i)
                     .copied()
                     .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS);
             }
         }
-        if pattern == Self::ASTERISK_ENCODING {
+        if pattern == ASTERISK_ENCODING {
             return Ok('*');
         }
         Err(Exceptions::NOT_FOUND)

@@ -21,6 +21,7 @@ use crate::RXingResult;
 use crate::common::{BitArray, Result};
 use crate::{BarcodeFormat, point};
 use crate::{RXingResultMetadataType, RXingResultMetadataValue};
+use super::oned_constants::coda_bar::*;
 
 use super::OneDReader;
 
@@ -75,7 +76,7 @@ impl OneDReader for CodaBarReader {
             nextStart += 8;
             // Stop as soon as we see the end character.
             if self.decodeRowRXingResult.chars().count() > 1
-                && Self::STARTEND_ENCODING.contains(&Self::ALPHABET[charOffset as usize])
+                && STARTEND_ENCODING.contains(&ALPHABET[charOffset as usize])
             {
                 break;
             }
@@ -109,20 +110,20 @@ impl OneDReader for CodaBarReader {
             let ch = *cached_drrr.get(i).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as usize;
             // self.decodeRowRXingResult
             //     .replace_range(i..=i, &Self::ALPHABET[ch].to_string());
-            cached_drrr[i] = Self::ALPHABET[ch];
+            cached_drrr[i] = ALPHABET[ch];
         }
         // Ensure a valid start and end character
         let startchar = cached_drrr.first().ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?;
-        if !Self::STARTEND_ENCODING.contains(startchar) {
+        if !STARTEND_ENCODING.contains(startchar) {
             return Err(Exceptions::NOT_FOUND);
         }
         let endchar = cached_drrr.last().ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?;
-        if !Self::STARTEND_ENCODING.contains(endchar) {
+        if !STARTEND_ENCODING.contains(endchar) {
             return Err(Exceptions::NOT_FOUND);
         }
 
         // remove stop/start characters character and check if a long enough string is contained
-        if (cached_drrr.len()) <= Self::MIN_CHARACTER_LENGTH as usize {
+        if (cached_drrr.len()) <= MIN_CHARACTER_LENGTH as usize {
             // Almost surely a false positive ( start + stop + at least 1 character)
             return Err(Exceptions::NOT_FOUND);
         }
@@ -192,7 +193,7 @@ impl CodaBarReader {
         let mut pos = start;
         for i in 0..=end {
             // for (int i = 0; i <= end; i++) {
-            let mut pattern = Self::CHARACTER_ENCODINGS
+            let mut pattern = CHARACTER_ENCODINGS
                 [*cached.get(i).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as usize];
             for j in (0_usize..=6).rev() {
                 // Even j = bars, while odd j = spaces. Categories 2 and 3 are for
@@ -219,7 +220,7 @@ impl CodaBarReader {
                 + (sizes[i + 2] as f32) / (counts[i + 2] as f32))
                 / 2.0;
             maxes[i] = mins[i + 2];
-            maxes[i + 2] = ((sizes[i + 2] as f32) * Self::MAX_ACCEPTABLE + Self::PADDING)
+            maxes[i + 2] = ((sizes[i + 2] as f32) * MAX_ACCEPTABLE + PADDING)
                 / (counts[i + 2] as f32);
         }
 
@@ -227,7 +228,7 @@ impl CodaBarReader {
         pos = start;
         for i in 0..=end {
             // for (int i = 0; i <= end; i++) {
-            let mut pattern = Self::CHARACTER_ENCODINGS
+            let mut pattern = CHARACTER_ENCODINGS
                 [*cached.get(i).ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)? as usize];
             for j in (0..=6).rev() {
                 // Even j = bars, while odd j = spaces. Categories 2 and 3 are for
@@ -290,7 +291,7 @@ impl CodaBarReader {
             // for (int i = 1; i < counterLength; i += 2) {
             let charOffset = self.toNarrowWidePattern(i);
             if charOffset != -1
-                && Self::STARTEND_ENCODING.contains(&Self::ALPHABET[charOffset as usize])
+                && STARTEND_ENCODING.contains(&ALPHABET[charOffset as usize])
             {
                 // Look for whitespace before start pattern, >= 50% of width of start pattern
                 // We make an exception if the whitespace is the first element.
@@ -359,8 +360,8 @@ impl CodaBarReader {
             }
         }
 
-        for i in 0..Self::CHARACTER_ENCODINGS.len() {
-            if Self::CHARACTER_ENCODINGS[i] == pattern {
+        for i in 0..CHARACTER_ENCODINGS.len() {
+            if CHARACTER_ENCODINGS[i] == pattern {
                 return i as i32;
             }
         }

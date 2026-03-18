@@ -14,9 +14,12 @@
  * limitations under the License.
  */
 
-use super::{L_AND_G_PATTERNS, OneDReader, UPCEANReader};
-use crate::{BarcodeFormat, Exceptions, common::Result};
+use super::{OneDReader, UPCEANReader};
+use crate::{BarcodeFormat, Exceptions, common::Result, oned::upcean_common::{checkStandardUPCEANChecksum, convertUPCEtoUPCA}};
 use rxing_one_d_proc_derive::{EANReader, OneDReader};
+
+use super::oned_constants::upc_ean_shared::L_AND_G_PATTERNS;
+use super::oned_constants::upc_e::*;
 
 /**
  * <p>Implements decoding of the UPC-E format.</p>
@@ -66,11 +69,11 @@ impl UPCEANReader for UPCEReader {
     }
 
     fn checkChecksum(&self, s: &str) -> Result<bool> {
-        self.checkStandardUPCEANChecksum(&convertUPCEtoUPCA(s).ok_or(Exceptions::ILLEGAL_ARGUMENT)?)
+        checkStandardUPCEANChecksum(&convertUPCEtoUPCA(s).ok_or(Exceptions::ILLEGAL_ARGUMENT)?)
     }
 
     fn decodeEnd(&self, row: &crate::common::BitArray, endStart: usize) -> Result<[usize; 2]> {
-        self.findGuardPattern(row, endStart, true, &Self::MIDDLE_END_PATTERN)
+        self.findGuardPattern(row, endStart, true, &MIDDLE_END_PATTERN)
     }
 }
 
@@ -83,7 +86,7 @@ impl UPCEReader {
     ) -> Result<()> {
         for numSys in 0..=1 {
             for d in 0..10 {
-                if lgPatternFound == Self::NUMSYS_AND_CHECK_DIGIT_PATTERNS[numSys][d] {
+                if lgPatternFound == NUMSYS_AND_CHECK_DIGIT_PATTERNS[numSys][d] {
                     resultString.insert(
                         0,
                         char::from_u32('0' as u32 + numSys as u32).ok_or(Exceptions::PARSE)?,

@@ -1,6 +1,6 @@
 #[cfg(feature = "decoders")]
 mod one_d_reader;
-
+ 
 #[cfg(feature = "decoders")] // there is no rss writer
 pub mod rss;
 
@@ -160,4 +160,4 @@ pub mod cpp;
 
 mod oned_constants;
 
-mod upcean_common;
+pub(crate) mod upcean_common;

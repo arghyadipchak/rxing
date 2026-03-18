@@ -19,7 +19,8 @@ use rxing_one_d_proc_derive::{EANReader, OneDReader};
 use super::UPCEANReader;
 
 use super::OneDReader;
-use super::upc_ean_reader;
+use super::oned_constants::upc_ean_shared::*;
+use super::oned_constants::ean_13::FIRST_DIGIT_ENCODINGS;
 
 use crate::BarcodeFormat;
 use crate::Exceptions;
@@ -63,7 +64,7 @@ impl UPCEANReader for EAN13Reader {
                 row,
                 &mut counters,
                 rowOffset,
-                &upc_ean_reader::L_AND_G_PATTERNS,
+                &L_AND_G_PATTERNS,
             )?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32 % 10).ok_or(Exceptions::PARSE)?);
@@ -80,14 +81,14 @@ impl UPCEANReader for EAN13Reader {
         Self::determineFirstDigit(resultString, lgPatternFound)?;
 
         let middleRange =
-            self.findGuardPattern(row, rowOffset, true, &upc_ean_reader::MIDDLE_PATTERN)?;
+            self.findGuardPattern(row, rowOffset, true, &MIDDLE_PATTERN)?;
         rowOffset = middleRange[1];
 
         let mut x = 0;
 
         while x < 6 && rowOffset < end {
             let bestMatch =
-                self.decodeDigit(row, &mut counters, rowOffset, &upc_ean_reader::L_PATTERNS)?;
+                self.decodeDigit(row, &mut counters, rowOffset, &L_PATTERNS)?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32).ok_or(Exceptions::PARSE)?);
 
@@ -112,7 +113,7 @@ impl EAN13Reader {
      * @throws NotFoundException if first digit cannot be determined
      */
     fn determineFirstDigit(resultString: &mut String, lgPatternFound: usize) -> Result<()> {
-        for (d, &fde) in Self::FIRST_DIGIT_ENCODINGS.iter().enumerate() {
+        for (d, &fde) in FIRST_DIGIT_ENCODINGS.iter().enumerate() {
             // for (int d = 0; d < 10; d++) {
             if lgPatternFound == fde {
                 resultString.insert(

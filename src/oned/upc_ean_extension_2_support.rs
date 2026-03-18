@@ -17,9 +17,7 @@
 use std::collections::HashMap;
 
 use crate::{
-    BarcodeFormat, Exceptions, RXingResult, RXingResultMetadataType, RXingResultMetadataValue,
-    common::{BitArray, Result},
-    point,
+    BarcodeFormat, Exceptions, RXingResult, RXingResultMetadataType, RXingResultMetadataValue, common::{BitArray, Result}, oned::oned_constants::upc_ean_shared::L_AND_G_PATTERNS, point
 };
 
 use super::{STAND_IN, UPCEANReader, upc_ean_reader};
@@ -85,7 +83,7 @@ impl UPCEANExtension2Support {
                 row,
                 &mut counters,
                 rowOffset,
-                &upc_ean_reader::L_AND_G_PATTERNS,
+                &L_AND_G_PATTERNS,
             )?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32 % 10).ok_or(Exceptions::PARSE)?);

@@ -11,7 +11,7 @@
 // using namespace ZXing;
 // using namespace ZXing::QRCode;
 
-use crate::qrcode::decoder::ErrorCorrectionLevel;
+use crate::qrcode::common::ErrorCorrectionLevel;
 
 #[test]
 fn ForBits() {

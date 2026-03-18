@@ -22,7 +22,7 @@ use crate::{
     BarcodeFormat, EncodeHintValue, EncodeHints, Writer, common::BitMatrix, qrcode::QRCodeWriter,
 };
 
-use super::decoder::ErrorCorrectionLevel;
+use super::common::ErrorCorrectionLevel;
 
 /**
  * @author satorux@google.com (Satoru Takabayashi) - creator

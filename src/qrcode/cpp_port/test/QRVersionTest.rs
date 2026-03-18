@@ -8,7 +8,7 @@ use crate::{
     common::BitMatrix,
     qrcode::{
         cpp_port::Type,
-        decoder::{Version, VersionRef},
+        common::{Version, VersionRef},
     },
 };
 

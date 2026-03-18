@@ -19,7 +19,8 @@ use crate::{
     common::{BitMatrix, Result},
 };
 
-use super::{DataMask, FormatInformation, Version, VersionRef};
+use super::{DataMask}; 
+use crate::qrcode::common::{FormatInformation, Version, VersionRef};
 
 /**
  * @author Sean Owen

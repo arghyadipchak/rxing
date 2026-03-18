@@ -24,7 +24,7 @@ use crate::{
 
 use crate::{RXingResultMetadataType, RXingResultMetadataValue};
 
-use super::{OneDReader, one_d_reader};
+use super::{OneDReader, one_d_reader, oned_constants::code_128::CODE_PATTERNS};
 
 /**
  * <p>Decodes Code 128 barcodes.</p>

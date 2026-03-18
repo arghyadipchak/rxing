@@ -18,7 +18,7 @@ use crate::{
     EncodeHintValue, EncodeHints,
     common::{BitArray, CharacterSet},
     qrcode::{
-        decoder::{ErrorCorrectionLevel, Mode, Version},
+        common::{ErrorCorrectionLevel, Mode, Version},
         encoder::{MinimalEncoder, qrcode_encoder},
     },
 };
