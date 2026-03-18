@@ -20,7 +20,7 @@ use crate::{
     qrcode::common::{ErrorCorrectionLevel, Version},
 };
 
-use super::{ QRCode, mask_util};
+use super::{QRCode, mask_util};
 use crate::common::cpp_essentials::ByteMatrix;
 /*
  * @author satorux@google.com (Satoru Takabayashi) - creator

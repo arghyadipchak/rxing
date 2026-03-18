@@ -39,8 +39,8 @@ use super::{
     AddressBookAUResultParser, AddressBookDoCoMoResultParser, BizcardResultParser,
     BookmarkDoCoMoResultParser, EmailAddressResultParser, EmailDoCoMoResultParser,
     ExpandedProductResultParser, GeoResultParser, ISBNResultParser, ParsedClientResult,
-     SMSMMSResultParser, SMSTOMMSTOResultParser, SMTPResultParser,
-    TelResultParser, TextParsedRXingResult, URIResultParser, URLTOResultParser, VCardResultParser,
+    SMSMMSResultParser, SMSTOMMSTOResultParser, SMTPResultParser, TelResultParser,
+    TextParsedRXingResult, URIResultParser, URLTOResultParser, VCardResultParser,
     VEventResultParser, VINResultParser, WifiResultParser,
 };
 
@@ -154,10 +154,8 @@ pub fn parseRXingResult(the_rxing_result: &RXingResult) -> ParsedClientResult {
         &URLTOResultParser::parse,
         &URIResultParser::parse,
         &ISBNResultParser::parse,
-
         #[cfg(feature = "oned")]
         &ProductResultParser::parse,
-
         &ExpandedProductResultParser::parse,
         &VINResultParser::parse,
     ];

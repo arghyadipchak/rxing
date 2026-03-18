@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{oned_constants::code_93, OneDimensionalCodeWriter};
+use super::{OneDimensionalCodeWriter, oned_constants::code_93};
 
 /**
  * This object renders a CODE93 code as a BitMatrix

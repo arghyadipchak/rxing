@@ -5,8 +5,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::qrcode::{
-    cpp_port::Type,
     common::{ErrorCorrectionLevel, FormatInformation},
+    cpp_port::Type,
 };
 
 const MASKED_TEST_FORMAT_INFO: u32 = 0x2BED;

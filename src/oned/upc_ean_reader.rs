@@ -15,7 +15,14 @@
  */
 
 use crate::{
-    BarcodeFormat, Binarizer, Exceptions, RXingResult, RXingResultMetadataType, RXingResultMetadataValue, Reader, common::{BitArray, Result}, oned::{oned_constants::upc_ean_shared::START_END_PATTERN, upcean_common::checkStandardUPCEANChecksum}, point
+    BarcodeFormat, Binarizer, Exceptions, RXingResult, RXingResultMetadataType,
+    RXingResultMetadataValue, Reader,
+    common::{BitArray, Result},
+    oned::{
+        oned_constants::upc_ean_shared::START_END_PATTERN,
+        upcean_common::checkStandardUPCEANChecksum,
+    },
+    point,
 };
 
 use super::{EANManufacturerOrgSupport, OneDReader, UPCEANExtensionSupport, one_d_reader};

@@ -8,11 +8,11 @@ mod version;
 mod version_build_versions_arrays;
 
 #[cfg(test)]
+mod ErrorCorrectionLevelTestCase;
+#[cfg(test)]
 mod FormatInformationTestCase;
 #[cfg(test)]
 mod ModeTestCase;
-#[cfg(test)]
-mod ErrorCorrectionLevelTestCase;
 #[cfg(test)]
 mod VersionTestCase;
 

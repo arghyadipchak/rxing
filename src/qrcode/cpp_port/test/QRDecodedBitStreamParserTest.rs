@@ -26,8 +26,8 @@
 use crate::{
     common::BitArray,
     qrcode::{
-        cpp_port::decoder::DecodeBitStream,
         common::{ErrorCorrectionLevel, Version},
+        cpp_port::decoder::DecodeBitStream,
     },
 };
 

@@ -11,5 +11,5 @@ mod data_matrix_reader;
 mod data_matrix_writer;
 #[cfg(feature = "decoders")]
 pub use data_matrix_reader::*;
-#[cfg(feature = "encoders")]    
+#[cfg(feature = "encoders")]
 pub use data_matrix_writer::*;

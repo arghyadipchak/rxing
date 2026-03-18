@@ -1,6 +1,6 @@
 #[cfg(feature = "decoders")]
 mod one_d_reader;
- 
+
 #[cfg(feature = "decoders")] // there is no rss writer
 pub mod rss;
 
@@ -50,7 +50,7 @@ mod upc_ean_reader;
 #[cfg(feature = "decoders")]
 pub use upc_ean_reader::*;
 
-        #[cfg(feature = "decoders")]
+#[cfg(feature = "decoders")]
 mod upc_ean_extension_2_support;
 #[cfg(feature = "decoders")]
 mod upc_ean_extension_5_support;

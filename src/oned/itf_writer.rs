@@ -50,12 +50,8 @@ impl OneDimensionalCodeWriter for ITFWriter {
 
         let cached_contents: Vec<char> = contents.chars().collect();
         for chunk in cached_contents.chunks_exact(2) {
-            let one = chunk[0]
-                .to_digit(10)
-                .ok_or(Exceptions::PARSE)? as usize;
-            let two = chunk[1]
-                .to_digit(10)
-                .ok_or(Exceptions::PARSE)? as usize;
+            let one = chunk[0].to_digit(10).ok_or(Exceptions::PARSE)? as usize;
+            let two = chunk[1].to_digit(10).ok_or(Exceptions::PARSE)? as usize;
 
             let mut encoding = [0; 10];
             for j in 0..5 {

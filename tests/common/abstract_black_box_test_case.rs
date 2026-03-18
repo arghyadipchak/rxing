@@ -247,7 +247,7 @@ impl<T: Reader> AbstractBlackBoxTestCase<T> {
                         RXingResultMetadataValue::UpcEanExtension(v)
                     }
                     #[cfg(feature = "pdf417")]
-                     RXingResultMetadataType::PDF417_EXTRA_METADATA => {
+                    RXingResultMetadataType::PDF417_EXTRA_METADATA => {
                         RXingResultMetadataValue::Pdf417ExtraMetadata(Arc::new(
                             PDF417RXingResultMetadata::default(),
                         ))

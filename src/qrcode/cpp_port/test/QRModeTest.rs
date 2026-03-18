@@ -5,8 +5,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::qrcode::{
-    cpp_port::Type,
     common::{Mode, Version},
+    cpp_port::Type,
 };
 
 #[test]

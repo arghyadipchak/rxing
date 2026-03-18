@@ -313,8 +313,12 @@ fn cpp_qrcode_black_box6_test_case() {
     tester.test_black_box();
 }
 
-#[cfg(all(feature = "multi_barcode_readers", feature = "qrcode", feature = "pdf417", feature = "image_formats"))]
-
+#[cfg(all(
+    feature = "multi_barcode_readers",
+    feature = "qrcode",
+    feature = "pdf417",
+    feature = "image_formats"
+))]
 #[test]
 fn cpp_qrcode_black_box7_test_case() {
     let mut tester = common::MultiImageSpanAbstractBlackBoxTestCase::new(

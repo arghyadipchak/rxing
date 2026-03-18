@@ -16,12 +16,12 @@
 
 use rxing_one_d_proc_derive::OneDReader;
 
+use super::oned_constants::coda_bar::*;
 use crate::Exceptions;
 use crate::RXingResult;
 use crate::common::{BitArray, Result};
 use crate::{BarcodeFormat, point};
 use crate::{RXingResultMetadataType, RXingResultMetadataValue};
-use super::oned_constants::coda_bar::*;
 
 use super::OneDReader;
 
@@ -220,8 +220,8 @@ impl CodaBarReader {
                 + (sizes[i + 2] as f32) / (counts[i + 2] as f32))
                 / 2.0;
             maxes[i] = mins[i + 2];
-            maxes[i + 2] = ((sizes[i + 2] as f32) * MAX_ACCEPTABLE + PADDING)
-                / (counts[i + 2] as f32);
+            maxes[i + 2] =
+                ((sizes[i + 2] as f32) * MAX_ACCEPTABLE + PADDING) / (counts[i + 2] as f32);
         }
 
         // Now verify that all of the stripes are within the thresholds.
@@ -290,9 +290,7 @@ impl CodaBarReader {
         while i < self.counterLength {
             // for (int i = 1; i < counterLength; i += 2) {
             let charOffset = self.toNarrowWidePattern(i);
-            if charOffset != -1
-                && STARTEND_ENCODING.contains(&ALPHABET[charOffset as usize])
-            {
+            if charOffset != -1 && STARTEND_ENCODING.contains(&ALPHABET[charOffset as usize]) {
                 // Look for whitespace before start pattern, >= 50% of width of start pattern
                 // We make an exception if the whitespace is the first element.
                 let mut patternSize = 0;

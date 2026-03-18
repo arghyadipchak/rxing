@@ -119,7 +119,7 @@
 
 use crate::{
     BarcodeFormat, DecodeHints, Exceptions, ImmutableReader, RXingResult, Reader,
-    common::{DetectorRXingResult, cpp_essentials::ConcentricPattern}
+    common::{DetectorRXingResult, cpp_essentials::ConcentricPattern},
 };
 
 #[cfg(feature = "multi_barcode_readers")]

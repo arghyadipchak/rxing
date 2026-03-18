@@ -18,7 +18,7 @@ mod buffered_image_luminance_source;
 pub use buffered_image_luminance_source::*;
 
 #[cfg(test)]
-    #[cfg(feature = "decoders")]
+#[cfg(feature = "decoders")]
 mod PlanarYUVLuminanceSourceTestCase;
 
 #[cfg(test)]
@@ -40,23 +40,22 @@ pub type PointCallback = Arc<dyn Fn(Point) + Send + Sync>;
 #[cfg(feature = "decoders")]
 pub type RXingResultPointCallback = PointCallback;
 
-
 mod dimension;
 pub use dimension::*;
 
 // The core encoding and decoding machinery lives in these submodules.
 #[cfg(feature = "aztec")]
 pub mod aztec;
-#[cfg(feature = "maxicode")]
-pub mod maxicode;
-#[cfg(feature = "qrcode")]
-pub mod qrcode;
 #[cfg(feature = "datamatrix")]
 pub mod datamatrix;
+#[cfg(feature = "maxicode")]
+pub mod maxicode;
 #[cfg(feature = "oned")]
 pub mod oned;
 #[cfg(feature = "pdf417")]
 pub mod pdf417;
+#[cfg(feature = "qrcode")]
+pub mod qrcode;
 
 #[cfg(all(feature = "multi_barcode_readers", feature = "decoders"))]
 pub mod multi;
@@ -68,7 +67,6 @@ pub mod helpers;
 mod svg_luminance_source;
 #[cfg(all(feature = "svg_read", feature = "decoders"))]
 pub use svg_luminance_source::*;
-
 
 // Reading
 #[cfg(feature = "decoders")]

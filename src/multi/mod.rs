@@ -11,5 +11,10 @@ mod generic_multiple_barcode_reader;
 pub use generic_multiple_barcode_reader::*;
 
 #[cfg(test)]
-#[cfg(all(feature = "image", feature= "multi_barcode_readers", feature = "qrcode", feature = "oned"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "qrcode",
+    feature = "oned"
+))]
 mod multi_test_case;

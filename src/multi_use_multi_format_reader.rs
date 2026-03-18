@@ -20,9 +20,7 @@ use crate::DecodeHints;
 use crate::common::Result;
 #[cfg(feature = "qrcode")]
 use crate::qrcode::cpp_port::QrReader;
-use crate::{
-    BarcodeFormat, Binarizer, BinaryBitmap, Exceptions, RXingResult, Reader
-};
+use crate::{BarcodeFormat, Binarizer, BinaryBitmap, Exceptions, RXingResult, Reader};
 
 #[cfg(feature = "aztec")]
 use crate::aztec::AztecReader;
@@ -173,7 +171,9 @@ impl MultiUseMultiFormatReader {
         };
 
         #[cfg(feature = "oned")]
-        {self.one_d_reader = MultiFormatOneDReader::new(hints);}
+        {
+            self.one_d_reader = MultiFormatOneDReader::new(hints);
+        }
     }
 
     pub fn decode_internal<B: Binarizer>(
@@ -252,7 +252,6 @@ impl MultiUseMultiFormatReader {
                         self.pdf417_reader.decode_with_hints(image, &self.hints)
                     }
                     #[cfg(feature = "maxicode")]
-
                     BarcodeFormat::MAXICODE => {
                         self.maxicode_reader.decode_with_hints(image, &self.hints)
                     }

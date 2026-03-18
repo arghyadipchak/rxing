@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{oned_constants::code_39, OneDimensionalCodeWriter};
+use super::{OneDimensionalCodeWriter, oned_constants::code_39};
 
 /**
  * This object renders a CODE39 code as a {@link BitMatrix}.
@@ -81,10 +81,7 @@ impl OneDimensionalCodeWriter for Code39Writer {
             ) else {
                 continue;
             };
-            Self::toIntArray(
-                code_39::CHARACTER_ENCODINGS[indexInString],
-                &mut widths,
-            );
+            Self::toIntArray(code_39::CHARACTER_ENCODINGS[indexInString], &mut widths);
             pos += Self::appendPattern(&mut result, pos as usize, &widths, true);
             pos += Self::appendPattern(&mut result, pos as usize, &narrowWhite, false);
         }

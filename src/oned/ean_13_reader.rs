@@ -19,8 +19,8 @@ use rxing_one_d_proc_derive::{EANReader, OneDReader};
 use super::UPCEANReader;
 
 use super::OneDReader;
-use super::oned_constants::upc_ean_shared::*;
 use super::oned_constants::ean_13::FIRST_DIGIT_ENCODINGS;
+use super::oned_constants::upc_ean_shared::*;
 
 use crate::BarcodeFormat;
 use crate::Exceptions;
@@ -60,12 +60,7 @@ impl UPCEANReader for EAN13Reader {
 
         while x < 6 && rowOffset < end {
             // for (int x = 0; x < 6 && rowOffset < end; x++) {
-            let bestMatch = self.decodeDigit(
-                row,
-                &mut counters,
-                rowOffset,
-                &L_AND_G_PATTERNS,
-            )?;
+            let bestMatch = self.decodeDigit(row, &mut counters, rowOffset, &L_AND_G_PATTERNS)?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32 % 10).ok_or(Exceptions::PARSE)?);
 
@@ -80,15 +75,13 @@ impl UPCEANReader for EAN13Reader {
 
         Self::determineFirstDigit(resultString, lgPatternFound)?;
 
-        let middleRange =
-            self.findGuardPattern(row, rowOffset, true, &MIDDLE_PATTERN)?;
+        let middleRange = self.findGuardPattern(row, rowOffset, true, &MIDDLE_PATTERN)?;
         rowOffset = middleRange[1];
 
         let mut x = 0;
 
         while x < 6 && rowOffset < end {
-            let bestMatch =
-                self.decodeDigit(row, &mut counters, rowOffset, &L_PATTERNS)?;
+            let bestMatch = self.decodeDigit(row, &mut counters, rowOffset, &L_PATTERNS)?;
             resultString
                 .push(char::from_u32('0' as u32 + bestMatch as u32).ok_or(Exceptions::PARSE)?);
 
@@ -101,7 +94,6 @@ impl UPCEANReader for EAN13Reader {
     }
 }
 impl EAN13Reader {
-
     /**
      * Based on pattern of odd-even ('L' and 'G') patterns used to encoded the explicitly-encoded
      * digits in a barcode, determines the implicitly encoded first digit and adds it to the

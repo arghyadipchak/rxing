@@ -14,9 +14,7 @@
  * limitations under the License.
  */
 
-use crate::qrcode::{
-    common::{ErrorCorrectionLevel, Mode, Version},
-};
+use crate::qrcode::common::{ErrorCorrectionLevel, Mode, Version};
 
 use super::QRCode;
 
