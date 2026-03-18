@@ -22,7 +22,7 @@ encoding = { version = "0.2", optional = true }
 urlencoding = "2.1"
 uriparse = "0.6"
 chrono = { version = "0.4", default-features = false, features = ["clock", "std", "oldtime"] }
-chrono-tz = "0.10"
+chrono-tz = {version = "0.10", optional = true}
 image = {version = "=0.25.8", optional = true, default-features = false}
 imageproc = {version = "0.25", optional = true}
 unicode-segmentation = "1.12"
@@ -33,7 +33,7 @@ svg = {version = "0.18", optional = true}
 resvg = {version = "0.45", optional = true, default-features=false}
 serde = { version = "1", features = ["derive", "rc"], optional = true }
 thiserror = "2.0"
-multimap = "0.10"
+multimap = {version="0.10", optional = true}
 
 [dev-dependencies]
 java-properties = "2.0"
@@ -69,7 +69,7 @@ image_formats = [
 encoders = []
 
 #/// Enable barcode decoders
-decoders = []
+decoders = ["dep:multimap"]
 
 #/// Disable all CharacterSet Support, this will break many barcode formats, but may be desirable for some use cases.
 no_character_set_support = []
@@ -134,7 +134,7 @@ serde = ["dep:serde"]
 otsu_level = ["image"]
 
 #/// Adds "client" features do decode many common data formats found in barcodes
-client_support = []
+client_support = ["dep:chrono-tz"]
 
 #/// For the `FilteredImageReader` if this feature is enabled it
 #/// will always reverse the order of pyramid scans
