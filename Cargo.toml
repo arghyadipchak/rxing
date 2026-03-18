@@ -69,7 +69,7 @@ image_formats = [
 encoders = []
 
 #/// Enable barcode decoders
-decoders = ["dep:multimap"]
+decoders = []
 
 #/// Disable all CharacterSet Support, this will break many barcode formats, but may be desirable for some use cases.
 no_character_set_support = []
@@ -91,7 +91,7 @@ aztec = []
 maxicode = []
 
 #//// Enable support for QR Code barcodes
-qrcode = []
+qrcode = ["dep:multimap"]
 
 #//// Enable support for Data Matrix barcodes
 datamatrix = []
@@ -103,7 +103,7 @@ oned = ["dep:rxing-one-d-proc-derive"]
 pdf417 = []
 
 #/// Enable support for multiple barcode reading
-multi_barcode_readers =  []
+multi_barcode_readers =  ["decoders"]
 
 #/// Enable support for encoding_rs (modern, efficient)
 encoding_rs = ["dep:encoding_rs", "dep:codepage-437"]

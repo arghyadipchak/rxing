@@ -75,7 +75,13 @@ impl Binarizer for BitMatrixBinarizer {
     }
 
     fn get_black_row(&self, y: usize) -> super::Result<std::borrow::Cow<BitArray>> {
-        Ok(Cow::Owned(self.0.get_row(y).unwrap_or().to_vec().into()))
+        Ok(Cow::Owned(
+            self.0
+                .get_row(y)
+                .ok_or(crate::Exceptions::INDEX_OUT_OF_BOUNDS)?
+                .to_vec()
+                .into(),
+        ))
     }
 
     fn get_black_row_from_matrix(
