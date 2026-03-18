@@ -17,7 +17,7 @@
 use crate::{
     common::BitArray,
     qrcode::{
-        decoder::{ErrorCorrectionLevel, Version},
+        common::{ErrorCorrectionLevel, Version},
         encoder::matrix_util,
     },
 };

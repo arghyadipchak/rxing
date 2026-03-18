@@ -15,4 +15,5 @@ pub use qrcode_detector::*;
 pub use qrcode_detector_result::*;
 
 #[cfg(test)]
+#[cfg(all(feature = "decoders", feature = "encoders" ))]
 mod detector_test;

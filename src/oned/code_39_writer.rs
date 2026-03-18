@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{Code39Reader, OneDimensionalCodeWriter};
+use super::{oned_constants::code_39, OneDimensionalCodeWriter};
 
 /**
  * This object renders a CODE39 code as a {@link BitMatrix}.
@@ -43,7 +43,7 @@ impl OneDimensionalCodeWriter for Code39Writer {
         while i < length {
             // for i in 0..length {
             // for (int i = 0; i < length; i++) {
-            if Code39Reader::ALPHABET_STRING
+            if code_39::ALPHABET_STRING
                 .find(
                     contents
                         .chars()
@@ -67,13 +67,13 @@ impl OneDimensionalCodeWriter for Code39Writer {
         let mut widths = [0_usize; 9]; //new int[9];
         let codeWidth = 24 + 1 + (13 * length);
         let mut result = vec![false; codeWidth];
-        Self::toIntArray(Code39Reader::ASTERISK_ENCODING, &mut widths);
+        Self::toIntArray(code_39::ASTERISK_ENCODING, &mut widths);
         let mut pos = Self::appendPattern(&mut result, 0, &widths, true);
         let narrowWhite = [1_usize];
         pos += Self::appendPattern(&mut result, pos as usize, &narrowWhite, false);
         //append next character to byte matrix
         for i in 0..length {
-            let Some(indexInString) = Code39Reader::ALPHABET_STRING.find(
+            let Some(indexInString) = code_39::ALPHABET_STRING.find(
                 contents
                     .chars()
                     .nth(i)
@@ -82,13 +82,13 @@ impl OneDimensionalCodeWriter for Code39Writer {
                 continue;
             };
             Self::toIntArray(
-                Code39Reader::CHARACTER_ENCODINGS[indexInString],
+                code_39::CHARACTER_ENCODINGS[indexInString],
                 &mut widths,
             );
             pos += Self::appendPattern(&mut result, pos as usize, &widths, true);
             pos += Self::appendPattern(&mut result, pos as usize, &narrowWhite, false);
         }
-        Self::toIntArray(Code39Reader::ASTERISK_ENCODING, &mut widths);
+        Self::toIntArray(code_39::ASTERISK_ENCODING, &mut widths);
         Self::appendPattern(&mut result, pos as usize, &widths, true);
 
         Ok(result)

@@ -1,7 +1,11 @@
+#![cfg(feature = "decoders")]
 use std::io::Read;
 
 use image::DynamicImage;
-use rxing::{Dimension, Reader, Writer};
+use rxing::{Dimension, Reader};
+
+#[cfg(feature = "encoders")]
+use rxing::Writer;
 
 #[cfg(feature = "multi_barcode_readers")]
 #[test]
@@ -555,7 +559,7 @@ fn issue_58() {
     );
 }
 
-#[cfg(all(feature = "image", feature = "datamatrix"))]
+#[cfg(all(feature = "image", feature = "datamatrix", feature = "encoders", feature = "decoders"))]
 #[test]
 fn issue_59() {
     use rand::prelude::*;

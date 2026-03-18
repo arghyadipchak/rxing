@@ -1,4 +1,4 @@
-use crate::qrcode::decoder::ErrorCorrectionLevel;
+use crate::qrcode::common::ErrorCorrectionLevel;
 
 impl ErrorCorrectionLevel {
     pub fn ECLevelFromBitsSigned(bits: i8, isMicro: bool) -> Self {

@@ -20,7 +20,8 @@ use crate::BarcodeFormat;
 use crate::common::Result;
 
 use super::{
-    OneDimensionalCodeWriter, UPCEANReader, UPCEANWriter, UPCEReader, upc_e_reader, upc_ean_reader,
+    OneDimensionalCodeWriter, UPCEANWriter, oned_constants::upc_ean_shared,
+    oned_constants::upc_e, upcean_common,
 };
 
 const CODE_WIDTH: usize = 3 + // start guard
@@ -41,12 +42,11 @@ impl OneDimensionalCodeWriter for UPCEWriter {
     fn encode_oned(&self, contents: &str) -> Result<Vec<bool>> {
         let length = contents.chars().count();
         let mut contents = contents.to_owned();
-        let reader = UPCEReader;
         match length {
             7 => {
                 // No check digit present, calculate it and add it
-                let check = reader.getStandardUPCEANChecksum(
-                    &upc_e_reader::convertUPCEtoUPCA(&contents)
+                let check = upcean_common::getStandardUPCEANChecksum(
+                    &upcean_common::convertUPCEtoUPCA(&contents)
                         .ok_or(Exceptions::ILLEGAL_ARGUMENT)?
                         .chars()
                         .collect::<Vec<_>>(),
@@ -54,8 +54,8 @@ impl OneDimensionalCodeWriter for UPCEWriter {
                 contents.push_str(&check.to_string());
             }
             8 => {
-                if !reader.checkStandardUPCEANChecksum(
-                    &upc_e_reader::convertUPCEtoUPCA(&contents)
+                if !upcean_common::checkStandardUPCEANChecksum(
+                    &upcean_common::convertUPCEtoUPCA(&contents)
                         .ok_or(Exceptions::ILLEGAL_ARGUMENT)?,
                 )? {
                     return Err(Exceptions::illegal_argument_with(
@@ -90,11 +90,11 @@ impl OneDimensionalCodeWriter for UPCEWriter {
             .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?
             .to_digit(10)
             .ok_or(Exceptions::PARSE)? as usize; //Character.digit(contents.charAt(7), 10);
-        let parities = UPCEReader::NUMSYS_AND_CHECK_DIGIT_PATTERNS[firstDigit][checkDigit];
+        let parities = upc_e::NUMSYS_AND_CHECK_DIGIT_PATTERNS[firstDigit][checkDigit];
         let mut result = [false; CODE_WIDTH];
 
         let mut pos =
-            Self::appendPattern(&mut result, 0, &upc_ean_reader::START_END_PATTERN, true) as usize;
+            Self::appendPattern(&mut result, 0, &upc_ean_shared::START_END_PATTERN, true) as usize;
 
         for i in 1..=6 {
             // for (int i = 1; i <= 6; i++) {
@@ -110,12 +110,12 @@ impl OneDimensionalCodeWriter for UPCEWriter {
             pos += Self::appendPattern(
                 &mut result,
                 pos,
-                &upc_ean_reader::L_AND_G_PATTERNS[digit],
+                &upc_ean_shared::L_AND_G_PATTERNS[digit],
                 false,
             ) as usize;
         }
 
-        Self::appendPattern(&mut result, pos, &upc_ean_reader::END_PATTERN, false);
+        Self::appendPattern(&mut result, pos, &upc_ean_shared::END_PATTERN, false);
 
         Ok(result.to_vec())
     }

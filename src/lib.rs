@@ -4,25 +4,28 @@
 pub mod common;
 mod exceptions;
 
-#[cfg(feature = "client_support")]
+#[cfg(all(feature = "client_support", feature = "decoders"))]
 pub mod client;
 
 use std::{collections::HashMap, sync::Arc};
 
 pub use exceptions::Exceptions;
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 mod buffered_image_luminance_source;
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub use buffered_image_luminance_source::*;
 
 #[cfg(test)]
+    #[cfg(feature = "decoders")]
 mod PlanarYUVLuminanceSourceTestCase;
 
 #[cfg(test)]
+#[cfg(feature = "decoders")]
 mod rgb_luminance_source_test_case;
 
+#[cfg(feature = "decoders")]
 pub type MetadataDictionary = HashMap<RXingResultMetadataType, RXingResultMetadataValue>;
 
 mod barcode_format;
@@ -30,9 +33,11 @@ pub use barcode_format::*;
 
 /// Callback which is invoked when a possible result point (significant
 /// point in the barcode image such as a corner) is found.
+#[cfg(feature = "decoders")]
 pub type PointCallback = Arc<dyn Fn(Point) + Send + Sync>;
 
 /** Temporary type to ease refactoring and keep backwards-compatibility */
+#[cfg(feature = "decoders")]
 pub type RXingResultPointCallback = PointCallback;
 
 
@@ -53,15 +58,15 @@ pub mod oned;
 #[cfg(feature = "pdf417")]
 pub mod pdf417;
 
-#[cfg(feature = "multi_barcode_readers")]
+#[cfg(all(feature = "multi_barcode_readers", feature = "decoders"))]
 pub mod multi;
 
 // Simple methods to help detect barcodes in common situations
 pub mod helpers;
 
-#[cfg(feature = "svg_read")]
+#[cfg(all(feature = "svg_read", feature = "decoders"))]
 mod svg_luminance_source;
-#[cfg(feature = "svg_read")]
+#[cfg(all(feature = "svg_read", feature = "decoders"))]
 pub use svg_luminance_source::*;
 
 
@@ -96,17 +101,13 @@ mod rxing_result;
 #[cfg(feature = "decoders")]
 pub use rxing_result::*;
 
-#[cfg(feature = "decoders")]
 mod result_point;
-#[cfg(feature = "decoders")]
 pub use result_point::*;
 
 #[cfg(feature = "decoders")]
 pub mod result_point_utils;
 
-#[cfg(feature = "decoders")]
 mod rxing_result_point;
-#[cfg(feature = "decoders")]
 pub use rxing_result_point::*;
 
 #[cfg(feature = "decoders")]
@@ -152,9 +153,9 @@ pub use encode_hints::*;
 #[cfg(feature = "encoders")]
 pub type EncodingHintDictionary = HashMap<EncodeHintType, EncodeHintValue>;
 
-#[cfg(feature = "encoders")]
+#[cfg(feature = "decoders")]
 mod filtered_image_reader;
-#[cfg(feature = "encoders")]
+#[cfg(feature = "decoders")]
 pub use filtered_image_reader::*;
 
 #[cfg(feature = "encoders")]

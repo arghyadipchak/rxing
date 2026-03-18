@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
+#[cfg(feature = "decoders")]
 use crate::LuminanceSource;
 use crate::common::BitArray;
 use once_cell::sync::Lazy;
@@ -24,12 +24,14 @@ static SPACES: Lazy<Regex> = Lazy::new(|| Regex::new("\\s+").unwrap());
 static DOTX: Lazy<Regex> = Lazy::new(|| Regex::new("[^.X]").unwrap());
 
 #[derive(Clone)]
+#[cfg(feature = "decoders")]
 pub struct MockLuminanceSource {
     width: usize,
     height: usize,
     luminances: Vec<u8>,
 }
 
+#[cfg(feature = "decoders")]
 impl MockLuminanceSource {
     pub fn new(width: usize, height: usize, luminances: Vec<u8>) -> Self {
         Self {
@@ -40,6 +42,7 @@ impl MockLuminanceSource {
     }
 }
 
+#[cfg(feature = "decoders")]
 impl LuminanceSource for MockLuminanceSource {
     fn get_row(&self, y: usize) -> Option<Cow<'_, [u8]>> {
         let offset = y * self.width;

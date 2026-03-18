@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![cfg(all(feature = "image", feature = "aztec"))]
+#![cfg(all(feature = "image", feature = "aztec", feature = "decoders"))]
 
 use rxing::{BarcodeFormat, aztec::AztecReader};
 

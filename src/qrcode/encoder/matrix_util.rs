@@ -17,7 +17,7 @@
 use crate::{
     Exceptions,
     common::{BitArray, BitFieldBaseType, Result},
-    qrcode::decoder::{ErrorCorrectionLevel, Version},
+    qrcode::common::{ErrorCorrectionLevel, Version},
 };
 
 use super::{ QRCode, mask_util};

@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::qrcode::decoder::Version;
+use super::Version;
 
 use super::Mode;
 

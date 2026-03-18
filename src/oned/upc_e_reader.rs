@@ -75,45 +75,7 @@ impl UPCEANReader for UPCEReader {
 }
 
 impl UPCEReader {
-    /**
-     * The pattern that marks the middle, and end, of a UPC-E pattern.
-     * There is no "second half" to a UPC-E barcode.
-     */
-    pub const MIDDLE_END_PATTERN: [u32; 6] = [1, 1, 1, 1, 1, 1];
-
-    // For an UPC-E barcode, the final digit is represented by the parities used
-    // to encode the middle six digits, according to the table below.
-    //
-    //                Parity of next 6 digits
-    //    Digit   0     1     2     3     4     5
-    //       0    Even   Even  Even Odd  Odd   Odd
-    //       1    Even   Even  Odd  Even Odd   Odd
-    //       2    Even   Even  Odd  Odd  Even  Odd
-    //       3    Even   Even  Odd  Odd  Odd   Even
-    //       4    Even   Odd   Even Even Odd   Odd
-    //       5    Even   Odd   Odd  Even Even  Odd
-    //       6    Even   Odd   Odd  Odd  Even  Even
-    //       7    Even   Odd   Even Odd  Even  Odd
-    //       8    Even   Odd   Even Odd  Odd   Even
-    //       9    Even   Odd   Odd  Even Odd   Even
-    //
-    // The encoding is represented by the following array, which is a bit pattern
-    // using Odd = 0 and Even = 1. For example, 5 is represented by:
-    //
-    //              Odd Even Even Odd Odd Even
-    // in binary:
-    //                0    1    1   0   0    1   == 0x19
-    //
-
-    /**
-     * See {@link #L_AND_G_PATTERNS}; these values similarly represent patterns of
-     * even-odd parity encodings of digits that imply both the number system (0 or 1)
-     * used, and the check digit.
-     */
-    pub const NUMSYS_AND_CHECK_DIGIT_PATTERNS: [[usize; 10]; 2] = [
-        [0x38, 0x34, 0x32, 0x31, 0x2C, 0x26, 0x23, 0x2A, 0x29, 0x25],
-        [0x07, 0x0B, 0x0D, 0x0E, 0x13, 0x19, 0x1C, 0x15, 0x16, 0x1A],
-    ];
+    
 
     fn determineNumSysAndCheckDigit(
         resultString: &mut String,
@@ -134,50 +96,4 @@ impl UPCEReader {
         }
         Err(Exceptions::NOT_FOUND)
     }
-}
-
-/**
- * Expands a UPC-E value back into its full, equivalent UPC-A code value.
- *
- * @param upce UPC-E code as string of digits
- * @return equivalent UPC-A code as string of digits
- */
-pub fn convertUPCEtoUPCA(upce: &str) -> Option<String> {
-    let upce = upce.chars().collect::<Vec<_>>();
-    let upceChars = &upce[1..7];
-
-    let mut result = Vec::with_capacity(12);
-
-    result.push(*upce.first()?);
-    let lastChar = *upceChars.get(5)?;
-    match lastChar {
-        '0' | '1' | '2' => {
-            result.extend_from_slice(&upceChars[0..2]);
-            // result.push(upceChars, 0, 2);
-            result.push(lastChar);
-            result.extend("0000".chars());
-            result.extend_from_slice(&upceChars[2..3 + 2]);
-        }
-        '3' => {
-            result.extend_from_slice(&upceChars[0..3]);
-            result.extend("00000".chars());
-            result.extend_from_slice(&upceChars[3..2 + 3]);
-        }
-        '4' => {
-            result.extend_from_slice(&upceChars[0..4]);
-            result.extend("00000".chars());
-            result.push(upceChars.get(4).copied()?);
-        }
-        _ => {
-            result.extend_from_slice(&upceChars[0..5]);
-            result.extend("0000".chars());
-            result.push(lastChar);
-        }
-    }
-    // Only append check digit in conversion if supplied
-    if upce.len() >= 8 {
-        result.push(*upce.get(7)?);
-    }
-
-    Some(String::from_iter(result))
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![cfg(all(feature = "image", feature = "qrcode"))]
+#![cfg(all(feature = "image", feature = "qrcode", feature = "decoders"))]
 
 use rxing::{BarcodeFormat, FilteredImageReader, MultiFormatReader, qrcode::QRCodeReader};
 

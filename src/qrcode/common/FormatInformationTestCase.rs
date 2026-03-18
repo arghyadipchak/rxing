@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::qrcode::decoder::{ErrorCorrectionLevel, FormatInformation};
+use super::{ErrorCorrectionLevel, FormatInformation};
 
 /**
  * @author Sean Owen

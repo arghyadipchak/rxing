@@ -1,21 +1,26 @@
+#[cfg(feature = "decoders")]
 pub mod detector;
 pub mod reedsolomon;
 
+#[cfg(feature = "decoders")]
 use crate::Point;
 
 #[cfg(test)]
 pub mod test_utils;
 
 #[cfg(test)]
+#[cfg(feature = "decoders")]
 mod StringUtilsTestCase;
 
 #[cfg(test)]
 mod BitArrayTestCase;
 
 #[cfg(test)]
+#[cfg(feature = "decoders")]
 mod hybrid_binarizer_test_case;
 
 #[cfg(test)]
+#[cfg(feature = "decoders")]
 mod adaptive_threshold_binarizer_test_case;
 
 #[cfg(test)]
@@ -25,8 +30,10 @@ pub(crate) mod bit_matrix_test_case;
 mod BitSourceTestCase;
 
 #[cfg(test)]
+#[cfg(feature = "decoders")]
 mod PerspectiveTransformTestCase;
 
+#[cfg(feature = "decoders")]
 pub mod string_utils;
 
 mod bit_array;
@@ -61,6 +68,7 @@ pub type Result<T, E = crate::Exceptions> = std::result::Result<T, E>;
  *
  * @author Sean Owen
  */
+#[cfg(feature = "decoders")]
 pub trait DetectorRXingResult {
     fn getBits(&self) -> &BitMatrix;
 
@@ -81,25 +89,35 @@ pub use eci_input::*;
 mod bit_source;
 pub use bit_source::*;
 
+#[cfg(feature = "decoders")]
 mod perspective_transform;
+#[cfg(feature = "decoders")]
 pub use perspective_transform::*;
 
+#[cfg(feature = "decoders")]
 mod decoder_rxing_result;
+#[cfg(feature = "decoders")]
 pub use decoder_rxing_result::*;
 
 mod bit_source_builder;
 pub use bit_source_builder::*;
 
+#[cfg(feature = "decoders")]
 mod grid_sampler;
+#[cfg(feature = "decoders")]
 pub use grid_sampler::*;
 
+#[cfg(feature = "decoders")]
 mod default_grid_sampler;
+#[cfg(feature = "decoders")]
 pub use default_grid_sampler::*;
 
 mod character_set;
 pub use character_set::*;
 
+#[cfg(feature = "decoders")]
 mod eci_string_builder;
+#[cfg(feature = "decoders")]
 pub use eci_string_builder::*;
 
 mod eci_encoder_set;
@@ -108,10 +126,14 @@ pub use eci_encoder_set::*;
 mod minimal_eci_input;
 pub use minimal_eci_input::*;
 
+#[cfg(feature = "decoders")]
 mod global_histogram_binarizer;
+#[cfg(feature = "decoders")]
 pub use global_histogram_binarizer::*;
 
+#[cfg(feature = "decoders")]
 mod hybrid_binarizer;
+#[cfg(feature = "decoders")]
 pub use hybrid_binarizer::*;
 
 mod eci;
@@ -130,9 +152,9 @@ mod otsu_level_binarizer;
 #[cfg(feature = "otsu_level")]
 pub use otsu_level_binarizer::*;
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature="decoders"))]
 mod adaptive_threshold_binarizer;
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature="decoders"))]
 pub use adaptive_threshold_binarizer::*;
 
 pub type BitFieldBaseType = usize;
@@ -142,4 +164,5 @@ pub const BIT_FIELD_SHIFT_BITS: usize = BIT_FIELD_BASE_BITS - 1;
 #[cfg(feature = "experimental_features")]
 mod bitmatrix_sources;
 
+#[cfg(feature = "decoders")]
 mod pattern_reader;

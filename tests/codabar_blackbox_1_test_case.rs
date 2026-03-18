@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![cfg(all(feature = "image", feature = "oned"))]
+#![cfg(all(feature = "image", feature = "oned", feature = "decoders"))]
 
 use rxing::{BarcodeFormat, oned::CodaBarReader};
 

@@ -16,7 +16,7 @@
 
 use std::fmt;
 
-use crate::qrcode::decoder::{ErrorCorrectionLevel, Mode, Version, VersionRef};
+use crate::qrcode::common::{ErrorCorrectionLevel, Mode, Version, VersionRef};
 
 use crate::common::cpp_essentials::ByteMatrix;
 

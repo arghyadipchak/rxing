@@ -10,6 +10,7 @@ pub use minimal_encoder::*;
 pub use qr_code::*;
 
 #[cfg(test)]
+#[cfg(feature = "decoders")]
 mod EncoderTestCase;
 #[cfg(test)]
 mod MaskUtilTestCase;

@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{Code93Reader, OneDimensionalCodeWriter};
+use super::{oned_constants::code_93, OneDimensionalCodeWriter};
 
 /**
  * This object renders a CODE93 code as a BitMatrix
@@ -47,11 +47,11 @@ impl OneDimensionalCodeWriter for Code93Writer {
         let mut result = vec![false; codeWidth];
 
         //start character (*)
-        let mut pos = Self::appendPattern(&mut result, 0, Code93Reader::ASTERISK_ENCODING as u32);
+        let mut pos = Self::appendPattern(&mut result, 0, code_93::ASTERISK_ENCODING as u32);
 
         for i in 0..length {
             // for (int i = 0; i < length; i++) {
-            let Some(indexInString) = Code93Reader::ALPHABET_STRING.find(
+            let Some(indexInString) = code_93::ALPHABET_STRING.find(
                 contents
                     .chars()
                     .nth(i)
@@ -62,27 +62,27 @@ impl OneDimensionalCodeWriter for Code93Writer {
             pos += Self::appendPattern(
                 &mut result,
                 pos,
-                Code93Reader::CHARACTER_ENCODINGS[indexInString],
+                code_93::CHARACTER_ENCODINGS[indexInString],
             );
         }
 
         //add two checksums
         let check1 = Self::computeChecksumIndex(&contents, 20);
-        pos += Self::appendPattern(&mut result, pos, Code93Reader::CHARACTER_ENCODINGS[check1]);
+        pos += Self::appendPattern(&mut result, pos, code_93::CHARACTER_ENCODINGS[check1]);
 
         //append the contents to reflect the first checksum added
         contents.push(
-            Code93Reader::ALPHABET_STRING
+            code_93::ALPHABET_STRING
                 .chars()
                 .nth(check1)
                 .ok_or(Exceptions::INDEX_OUT_OF_BOUNDS)?,
         );
 
         let check2 = Self::computeChecksumIndex(&contents, 15);
-        pos += Self::appendPattern(&mut result, pos, Code93Reader::CHARACTER_ENCODINGS[check2]);
+        pos += Self::appendPattern(&mut result, pos, code_93::CHARACTER_ENCODINGS[check2]);
 
         //end character (*)
-        pos += Self::appendPattern(&mut result, pos, Code93Reader::ASTERISK_ENCODING as u32);
+        pos += Self::appendPattern(&mut result, pos, code_93::ASTERISK_ENCODING as u32);
 
         //termination bar (single black bar)
         result[pos] = true;
@@ -142,7 +142,7 @@ impl Code93Writer {
         for i in (0..contents.chars().count()).rev() {
             // for (int i = contents.length() - 1; i >= 0; i--) {
             let Some(indexInString) =
-                Code93Reader::ALPHABET_STRING.find(contents.chars().nth(i).unwrap())
+                code_93::ALPHABET_STRING.find(contents.chars().nth(i).unwrap())
             else {
                 panic!("not in the alphabet");
             };
