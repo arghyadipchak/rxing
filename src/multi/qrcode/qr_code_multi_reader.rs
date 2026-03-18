@@ -27,6 +27,7 @@ use crate::{
     },
 };
 
+
 use super::detector::MultiDetector;
 
 /**

@@ -32,3 +32,6 @@ pub use step_result::*;
 pub use structured_append::*;
 pub use util::*;
 pub use value::*;
+
+mod byte_matrix;
+pub use byte_matrix::*;

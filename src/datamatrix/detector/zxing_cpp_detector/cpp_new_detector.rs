@@ -24,7 +24,7 @@ use crate::{
         zxing_cpp_detector::{BitMatrixCursorTrait, util::intersect},
     },
     point,
-    qrcode::encoder::ByteMatrix,
+    common::cpp_essentials::ByteMatrix,
 };
 
 use super::{DMRegressionLine, EdgeTracer};

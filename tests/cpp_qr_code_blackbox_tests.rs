@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![cfg(feature = "image")]
+#![cfg(all(feature = "image", feature = "qrcode"))]
 
 use rxing::{
     BarcodeFormat, MultiFormatReader, MultiUseMultiFormatReader, qrcode::cpp_port::QrReader,
@@ -313,7 +313,8 @@ fn cpp_qrcode_black_box6_test_case() {
     tester.test_black_box();
 }
 
-#[cfg(feature = "image_formats")]
+#[cfg(all(feature = "multi_barcode_readers", feature = "qrcode", feature = "pdf417", feature = "image_formats"))]
+
 #[test]
 fn cpp_qrcode_black_box7_test_case() {
     let mut tester = common::MultiImageSpanAbstractBlackBoxTestCase::new(

@@ -17,7 +17,7 @@
 use crate::Exceptions;
 use crate::common::Result;
 
-use super::ByteMatrix;
+use crate::common::cpp_essentials::ByteMatrix;
 
 /*
  * @author Satoru Takabayashi

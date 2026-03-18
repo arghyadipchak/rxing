@@ -22,7 +22,7 @@ use crate::{
     },
 };
 
-use super::ByteMatrix;
+use crate::common::cpp_essentials::ByteMatrix;
 
 /**
  * @author satorux@google.com (Satoru Takabayashi) - creator

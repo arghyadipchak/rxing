@@ -18,7 +18,7 @@
 use crate::{
     BarcodeFormat, EncodeHints, Exceptions, Writer,
     common::{BitMatrix, CharacterSet, Result},
-    qrcode::encoder::ByteMatrix,
+    common::cpp_essentials::ByteMatrix,
 };
 
 use super::encoder::{

@@ -3,8 +3,7 @@ use crate::{
     common::{
         DefaultGridSampler, GridSampler, Result, SamplerControl,
         cpp_essentials::{
-            CenterOfRing, DMRegressionLine, FindConcentricPatternCorners, FindLeftGuardBy, Matrix,
-            Value,
+            AppendBit, CenterOfRing, DMRegressionLine, FindConcentricPatternCorners, FindLeftGuardBy, Matrix, Value
         },
     },
     point, point_i,
@@ -487,12 +486,6 @@ pub fn ReadVersion(
     }
 
     Version::DecodeVersionInformation(bits[0], bits[1])
-}
-
-pub fn AppendBit(val: &mut i32, bit: bool) {
-    *val <<= 1;
-
-    *val |= i32::from(bit)
 }
 
 pub fn SampleQR(image: &BitMatrix, fp: &FinderPatternSet) -> Result<QRCodeDetectorResult> {

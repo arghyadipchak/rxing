@@ -1,4 +1,4 @@
-#![cfg(feature = "image")]
+#![cfg(all(feature = "image", feature = "oned"))]
 
 /**
 * Unless required by applicable law or agreed to in writing, software

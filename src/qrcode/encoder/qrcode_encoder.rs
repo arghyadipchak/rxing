@@ -25,7 +25,8 @@ use crate::{
     qrcode::decoder::{ErrorCorrectionLevel, Mode, Version, VersionRef},
 };
 
-use super::{BlockPair, ByteMatrix, MinimalEncoder, QRCode, mask_util, matrix_util};
+use super::{BlockPair, MinimalEncoder, QRCode, mask_util, matrix_util};
+use crate::common::cpp_essentials::ByteMatrix;
 
 static SHIFT_JIS_CHARSET: CharacterSet = CharacterSet::Shift_JIS;
 

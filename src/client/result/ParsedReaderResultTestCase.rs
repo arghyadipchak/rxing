@@ -253,6 +253,7 @@ fn test_bizcard() {
 }
 
 #[test]
+#[cfg(feature = "oned")]
 fn test_upca() {
     do_test_rxing_result_long(
         "123456789012",
@@ -270,6 +271,7 @@ fn test_upca() {
 }
 
 #[test]
+#[cfg(feature = "oned")]
 fn test_upce() {
     do_test_rxing_result_long(
         "01234565",
@@ -280,6 +282,7 @@ fn test_upce() {
 }
 
 #[test]
+#[cfg(feature = "oned")]
 fn test_ean() {
     do_test_rxing_result_long(
         "00393157",
