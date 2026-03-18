@@ -15,18 +15,18 @@ rust-version = "1.85"
 
 [dependencies]
 regex = "1.12"
-fancy-regex = "0.17"
+fancy-regex = {version = "0.17", optional = true}
 once_cell = "1.21"
 encoding_rs = { version = "0.8", optional = true }
 encoding = { version = "0.2", optional = true }
-urlencoding = "2.1"
-uriparse = "0.6"
+urlencoding = {version = "2.1", optional = true}
+uriparse = {version = "0.6", optional = true}
 chrono = { version = "0.4", default-features = false, features = ["clock", "std", "oldtime"] }
 chrono-tz = {version = "0.10", optional = true}
 image = {version = "=0.25.8", optional = true, default-features = false}
 imageproc = {version = "0.25", optional = true}
 unicode-segmentation = "1.12"
-codepage-437 = "0.1"
+codepage-437 = {version = "0.1", optional = true}
 rxing-one-d-proc-derive = {version = "0.8", path ="./crates/one-d-proc-derive", optional = true}
 num = "0.4"
 svg = {version = "0.18", optional = true}
@@ -106,10 +106,10 @@ pdf417 = []
 multi_barcode_readers =  []
 
 #/// Enable support for encoding_rs (modern, efficient)
-encoding_rs = ["dep:encoding_rs"]
+encoding_rs = ["dep:encoding_rs", "dep:codepage-437"]
 
 #/// Enable legacy encoding (original behavior)
-legacy_encoding = ["dep:encoding"]
+legacy_encoding = ["dep:encoding", "dep:codepage-437"]
 
 #/// Allows the ability to force ISO/IED 18004 compliance.
 #/// Leave disabled unless specificially needed.
@@ -134,7 +134,7 @@ serde = ["dep:serde"]
 otsu_level = ["image"]
 
 #/// Adds "client" features do decode many common data formats found in barcodes
-client_support = ["dep:chrono-tz"]
+client_support = ["dep:chrono-tz", "dep:fancy-regex", "dep:urlencoding", "dep:uriparse"]
 
 #/// For the `FilteredImageReader` if this feature is enabled it
 #/// will always reverse the order of pyramid scans
