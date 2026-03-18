@@ -25,3 +25,4 @@ dbgfle*
 .vscode/*
 
 *.md
+.claude
