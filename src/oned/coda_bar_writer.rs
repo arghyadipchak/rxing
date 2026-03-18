@@ -19,7 +19,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::BarcodeFormat;
 use crate::common::Result;
 
-use super::{oned_constants::coda_bar, OneDimensionalCodeWriter};
+use super::{OneDimensionalCodeWriter, oned_constants::coda_bar};
 
 const START_END_CHARS: [char; 4] = ['A', 'B', 'C', 'D'];
 const ALT_START_END_CHARS: [char; 4] = ['T', 'N', '*', 'E'];

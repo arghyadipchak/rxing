@@ -16,7 +16,7 @@
 
 use crate::{
     BarcodeFormat, Binarizer, BinaryBitmap, DecodeHints, Exceptions, ImmutableReader, Point,
-    RXingResult, RXingResultMetadataType, RXingResultMetadataValue, Reader, common::Result
+    RXingResult, RXingResultMetadataType, RXingResultMetadataValue, Reader, common::Result,
 };
 
 #[cfg(feature = "multi_barcode_readers")]

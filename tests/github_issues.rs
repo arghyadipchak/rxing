@@ -19,7 +19,11 @@ fn issue_27_part_2() {
     rxing::helpers::detect_multiple_in_luma(data, 720, 618).unwrap_or_default();
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "datamatrix"
+))]
 #[test]
 fn issue_28() {
     use rxing::DecodeHints;
@@ -29,7 +33,11 @@ fn issue_28() {
     rxing::helpers::detect_multiple_in_file_with_hints("test_resources/blackbox/github_issue_cases/226611447-be6041dc-5b21-42fe-827b-068ccc59082c.png", &mut hints).unwrap_or_default();
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "full_barcode_format_support"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "full_barcode_format_support"
+))]
 #[test]
 fn dynamsoft_all_supported_formats_image_fault() {
     use rxing::DecodeHints;
@@ -122,7 +130,11 @@ fn zxing_bench_issue_1() {
     */
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "datamatrix"
+))]
 #[test]
 fn issue_48() {
     use rxing::BarcodeFormat;
@@ -345,7 +357,12 @@ fn zxing_bench_grey_image_issue_raw_luma8() {
     */
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "oned", feature = "qrcode"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "oned",
+    feature = "qrcode"
+))]
 #[test]
 fn test_issue_49() {
     use rxing::{
@@ -463,7 +480,11 @@ fn test_issue_50_2() {
     assert_eq!(EXPECTED_FORMAT, result.getBarcodeFormat());
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "datamatrix"
+))]
 #[test]
 fn issue_51_multiple_detection() {
     use image::DynamicImage;
@@ -559,7 +580,12 @@ fn issue_58() {
     );
 }
 
-#[cfg(all(feature = "image", feature = "datamatrix", feature = "encoders", feature = "decoders"))]
+#[cfg(all(
+    feature = "image",
+    feature = "datamatrix",
+    feature = "encoders",
+    feature = "decoders"
+))]
 #[test]
 fn issue_59() {
     use rand::prelude::*;
@@ -610,7 +636,12 @@ fn issue_59() {
     assert_eq!(detection.getText(), data2);
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix", feature = "oned"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "datamatrix",
+    feature = "oned"
+))]
 #[test]
 fn issue_69_timed() {
     use std::{sync::mpsc, thread, time::Duration};
@@ -641,7 +672,12 @@ fn issue_69_timed() {
     }
 }
 
-#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix", feature = "oned"))]
+#[cfg(all(
+    feature = "image",
+    feature = "multi_barcode_readers",
+    feature = "datamatrix",
+    feature = "oned"
+))]
 #[test]
 fn issue_69() {
     use rxing::DecodeHints;
@@ -687,7 +723,8 @@ fn issue_78_subtract_with_overflow() {
         .unwrap()
         .read_to_end(&mut data_1)
         .unwrap();
-    rxing::helpers::detect_multiple_in_luma_with_hints(data_1, 682, 504, &mut hints).unwrap_or_default();
+    rxing::helpers::detect_multiple_in_luma_with_hints(data_1, 682, 504, &mut hints)
+        .unwrap_or_default();
 
     let mut data_2 = Vec::new();
     std::fs::File::open("test_resources/blackbox/github_issue_cases/subtract-with-overflow-qrcode-detector-2-issue-78.bin")
@@ -695,15 +732,19 @@ fn issue_78_subtract_with_overflow() {
         .read_to_end(&mut data_2)
         .unwrap();
 
-    rxing::helpers::detect_multiple_in_luma_with_hints(data_2, 678, 504, &mut hints).unwrap_or_default();
+    rxing::helpers::detect_multiple_in_luma_with_hints(data_2, 678, 504, &mut hints)
+        .unwrap_or_default();
 
     let mut data_3 = Vec::new();
-    std::fs::File::open("test_resources/blackbox/github_issue_cases/subtract-with-overflow-version-issue-78.bin")
-        .unwrap()
-        .read_to_end(&mut data_3)
-        .unwrap();
+    std::fs::File::open(
+        "test_resources/blackbox/github_issue_cases/subtract-with-overflow-version-issue-78.bin",
+    )
+    .unwrap()
+    .read_to_end(&mut data_3)
+    .unwrap();
 
-    rxing::helpers::detect_multiple_in_luma_with_hints(data_3, 672, 504, &mut hints).unwrap_or_default();
+    rxing::helpers::detect_multiple_in_luma_with_hints(data_3, 672, 504, &mut hints)
+        .unwrap_or_default();
 }
 
 #[cfg(feature = "image")]

@@ -21,9 +21,7 @@ use crate::common::Result;
 use crate::oned::cpp::ODReader;
 #[cfg(feature = "qrcode")]
 use crate::qrcode::cpp_port::QrReader;
-use crate::{
-    BarcodeFormat, Binarizer, BinaryBitmap, Exceptions, RXingResult, Reader,
-};
+use crate::{BarcodeFormat, Binarizer, BinaryBitmap, Exceptions, RXingResult, Reader};
 use crate::{DecodeHints, ONE_D_FORMATS};
 
 #[cfg(feature = "aztec")]
@@ -248,7 +246,7 @@ impl MultiFormatReader {
             if let Ok(res) = DataMatrixReader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
-            #[cfg(feature = "aztec")]   
+            #[cfg(feature = "aztec")]
             if let Ok(res) = AztecReader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }

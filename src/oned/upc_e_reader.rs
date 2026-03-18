@@ -15,11 +15,15 @@
  */
 
 use super::{OneDReader, UPCEANReader};
-use crate::{BarcodeFormat, Exceptions, common::Result, oned::upcean_common::{checkStandardUPCEANChecksum, convertUPCEtoUPCA}};
+use crate::{
+    BarcodeFormat, Exceptions,
+    common::Result,
+    oned::upcean_common::{checkStandardUPCEANChecksum, convertUPCEtoUPCA},
+};
 use rxing_one_d_proc_derive::{EANReader, OneDReader};
 
-use super::oned_constants::upc_ean_shared::L_AND_G_PATTERNS;
 use super::oned_constants::upc_e::*;
+use super::oned_constants::upc_ean_shared::L_AND_G_PATTERNS;
 
 /**
  * <p>Implements decoding of the UPC-E format.</p>
@@ -78,8 +82,6 @@ impl UPCEANReader for UPCEReader {
 }
 
 impl UPCEReader {
-    
-
     fn determineNumSysAndCheckDigit(
         resultString: &mut String,
         lgPatternFound: usize,

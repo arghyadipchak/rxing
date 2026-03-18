@@ -19,7 +19,10 @@ use rxing_one_d_proc_derive::OneDWriter;
 use crate::{
     BarcodeFormat,
     common::Result,
-    oned::{upcean_common, oned_constants::{ean_13, upc_ean_shared}},
+    oned::{
+        oned_constants::{ean_13, upc_ean_shared},
+        upcean_common,
+    },
 };
 
 use super::{OneDimensionalCodeWriter, UPCEANWriter};
@@ -40,8 +43,9 @@ impl OneDimensionalCodeWriter for EAN13Writer {
         match length {
             12 => {
                 // No check digit present, calculate it and add it
-                let check =
-                    upcean_common::getStandardUPCEANChecksum(&contents.chars().collect::<Vec<_>>())?;
+                let check = upcean_common::getStandardUPCEANChecksum(
+                    &contents.chars().collect::<Vec<_>>(),
+                )?;
                 contents.push_str(&check.to_string());
             }
             13 => {

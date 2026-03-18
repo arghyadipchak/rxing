@@ -14,28 +14,25 @@
  * limitations under the License.
  */
 
-use crate::{
-    BarcodeFormat, EncodeHints, Exceptions, Writer,
-    common::Result
-};
+use crate::{BarcodeFormat, EncodeHints, Exceptions, Writer, common::Result};
 
 #[cfg(feature = "oned")]
 use crate::oned::{
-        CodaBarWriter, Code39Writer, Code93Writer, Code128Writer, EAN8Writer, EAN13Writer,
-        ITFWriter, TelepenWriter, UPCAWriter, UPCEWriter,
-    };
+    CodaBarWriter, Code39Writer, Code93Writer, Code128Writer, EAN8Writer, EAN13Writer, ITFWriter,
+    TelepenWriter, UPCAWriter, UPCEWriter,
+};
 
-    #[cfg(feature = "aztec")]
-    use crate::aztec::AztecWriter;
+#[cfg(feature = "aztec")]
+use crate::aztec::AztecWriter;
 
-    #[cfg(feature = "datamatrix")]
-    use crate::datamatrix::DataMatrixWriter;
+#[cfg(feature = "datamatrix")]
+use crate::datamatrix::DataMatrixWriter;
 
-    #[cfg(feature = "pdf417")]
-    use crate::pdf417::PDF417Writer;
+#[cfg(feature = "pdf417")]
+use crate::pdf417::PDF417Writer;
 
-    #[cfg(feature = "qrcode")]
-    use crate::qrcode::QRCodeWriter;
+#[cfg(feature = "qrcode")]
+use crate::qrcode::QRCodeWriter;
 
 /**
  * This is a factory class which finds the appropriate Writer subclass for the BarcodeFormat

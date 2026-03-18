@@ -15,6 +15,7 @@ use std::sync::{Arc, RwLock};
 
 use crate::{
     Exceptions, Point,
+    common::cpp_essentials::ByteMatrix,
     common::{
         BitMatrix, DefaultGridSampler, GridSampler, Quadrilateral, Result,
         cpp_essentials::RegressionLineTrait,
@@ -24,7 +25,6 @@ use crate::{
         zxing_cpp_detector::{BitMatrixCursorTrait, util::intersect},
     },
     point,
-    common::cpp_essentials::ByteMatrix,
 };
 
 use super::{DMRegressionLine, EdgeTracer};

@@ -25,7 +25,12 @@ use rxing::pdf417::PDF417Reader;
  *
  * @author Guenther Grau
  */
-#[cfg(all(feature = "image_formats", feature = "multi_barcode_readers", feature = "qrcode", feature = "pdf417"))]
+#[cfg(all(
+    feature = "image_formats",
+    feature = "multi_barcode_readers",
+    feature = "qrcode",
+    feature = "pdf417"
+))]
 #[test]
 fn pdf417_black_box4_test_case() {
     let mut tester = common::MultiImageSpanAbstractBlackBoxTestCase::new(

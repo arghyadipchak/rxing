@@ -20,8 +20,8 @@ use crate::BarcodeFormat;
 use crate::common::Result;
 
 use super::{
-    OneDimensionalCodeWriter, UPCEANWriter, oned_constants::upc_ean_shared,
-    oned_constants::upc_e, upcean_common,
+    OneDimensionalCodeWriter, UPCEANWriter, oned_constants::upc_e, oned_constants::upc_ean_shared,
+    upcean_common,
 };
 
 const CODE_WIDTH: usize = 3 + // start guard

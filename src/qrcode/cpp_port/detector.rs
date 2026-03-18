@@ -3,7 +3,8 @@ use crate::{
     common::{
         DefaultGridSampler, GridSampler, Result, SamplerControl,
         cpp_essentials::{
-            AppendBit, CenterOfRing, DMRegressionLine, FindConcentricPatternCorners, FindLeftGuardBy, Matrix, Value
+            AppendBit, CenterOfRing, DMRegressionLine, FindConcentricPatternCorners,
+            FindLeftGuardBy, Matrix, Value,
         },
     },
     point, point_i,

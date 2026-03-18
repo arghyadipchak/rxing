@@ -20,8 +20,8 @@ pub use aztec_writer::*;
 #[cfg(feature = "decoders")]
 mod DecoderTest;
 #[cfg(test)]
-#[cfg(all(feature = "decoders", feature = "encoders" ))]
+#[cfg(all(feature = "decoders", feature = "encoders"))]
 mod DetectorTest;
 #[cfg(test)]
-#[cfg(all(feature = "encoders", feature="decoders"))]
+#[cfg(all(feature = "encoders", feature = "decoders"))]
 mod EncoderTest;

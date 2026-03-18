@@ -1,25 +1,25 @@
 use criterion::{Criterion, criterion_group, criterion_main};
-#[cfg(feature="aztec")]
+#[cfg(feature = "aztec")]
 use rxing::aztec::AztecReader;
 use rxing::common::HybridBinarizer;
-#[cfg(feature="datamatrix")]
+#[cfg(feature = "datamatrix")]
 use rxing::datamatrix::DataMatrixReader;
-#[cfg(feature="maxicode")]
+#[cfg(feature = "maxicode")]
 use rxing::maxicode::MaxiCodeReader;
-#[cfg(feature="multi_barcode_readers")]
+#[cfg(feature = "multi_barcode_readers")]
 use rxing::multi::{GenericMultipleBarcodeReader, MultipleBarcodeReader};
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 use rxing::oned::rss::RSS14Reader;
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 use rxing::oned::rss::expanded::RSSExpandedReader;
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 use rxing::oned::{
     CodaBarReader, Code39Reader, Code93Reader, EAN8Reader, EAN13Reader, ITFReader, TelepenReader,
     UPCAReader, UPCEReader,
 };
-#[cfg(feature="pdf417")]
+#[cfg(feature = "pdf417")]
 use rxing::pdf417::PDF417Reader;
-#[cfg(feature="qrcode")]
+#[cfg(feature = "qrcode")]
 use rxing::qrcode::QRCodeReader;
 use rxing::{BinaryBitmap, BufferedImageLuminanceSource, Reader};
 use rxing::{FilteredImageReader, MultiFormatReader};
@@ -33,7 +33,7 @@ fn get_image(
     )))
 }
 
-#[cfg(feature="aztec")]
+#[cfg(feature = "aztec")]
 fn aztec_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/aztec-1/abc-37x37.png");
     let mut reader = AztecReader;
@@ -45,7 +45,7 @@ fn aztec_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn codabar_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/codabar-1/02.png");
     let mut reader = CodaBarReader::default();
@@ -57,7 +57,7 @@ fn codabar_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn code39_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/code39-1/1.png");
     let mut reader = Code39Reader::default();
@@ -69,7 +69,7 @@ fn code39_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn code93_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/code93-1/1.png");
     let mut reader = Code93Reader::default();
@@ -81,7 +81,7 @@ fn code93_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="datamatrix")]
+#[cfg(feature = "datamatrix")]
 fn datamatrix_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/datamatrix-1/C40.png");
     let mut reader = DataMatrixReader;
@@ -93,7 +93,7 @@ fn datamatrix_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn ean8_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/ean8-1/1.png");
     let mut reader = EAN8Reader;
@@ -105,7 +105,7 @@ fn ean8_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn ean13_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/ean13-1/1.png");
     let mut reader = EAN13Reader;
@@ -117,7 +117,7 @@ fn ean13_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn itf_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/itf-1/1.png");
     let mut reader = ITFReader::default();
@@ -129,7 +129,7 @@ fn itf_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="maxicode")]
+#[cfg(feature = "maxicode")]
 fn maxicode_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/maxicode-1/1.png");
     let mut reader = MaxiCodeReader::default();
@@ -141,7 +141,7 @@ fn maxicode_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="pdf417")]
+#[cfg(feature = "pdf417")]
 fn pdf417_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/pdf417-1/01.png");
     let mut reader = PDF417Reader;
@@ -153,7 +153,7 @@ fn pdf417_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="qrcode")]
+#[cfg(feature = "qrcode")]
 fn qrcode_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/qrcode-2/1.png");
     let mut reader = QRCodeReader;
@@ -165,7 +165,7 @@ fn qrcode_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn rss14_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/rss14-1/3.png");
     c.bench_function("rss14", |b| {
@@ -176,7 +176,7 @@ fn rss14_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn rss_expanded_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/rssexpanded-1/1.png");
     c.bench_function("rss_expanded", |b| {
@@ -187,7 +187,7 @@ fn rss_expanded_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn telepen_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/telepen-1/02.png");
     let mut reader = TelepenReader::default();
@@ -199,7 +199,7 @@ fn telepen_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn upca_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/upca-4/1.png");
     c.bench_function("upca", |b| {
@@ -210,7 +210,7 @@ fn upca_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="oned")]
+#[cfg(feature = "oned")]
 fn upce_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/upce-1/1.png");
     c.bench_function("upce", |b| {
@@ -221,7 +221,7 @@ fn upce_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="multi_barcode_readers")]
+#[cfg(feature = "multi_barcode_readers")]
 fn multi_barcode_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/multi-1/1.png");
     c.bench_function("multi_barcode", |b| {
@@ -232,7 +232,7 @@ fn multi_barcode_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="multi_barcode_readers")]
+#[cfg(feature = "multi_barcode_readers")]
 fn multi_barcode_filtered_reader_benchmark(c: &mut Criterion) {
     let mut image = get_image("test_resources/blackbox/multi-1/1.png");
     c.bench_function("multi_barcode", |b| {
@@ -245,7 +245,7 @@ fn multi_barcode_filtered_reader_benchmark(c: &mut Criterion) {
     });
 }
 
-#[cfg(feature="multi_barcode_readers")]
+#[cfg(feature = "multi_barcode_readers")]
 fn multi_barcode_complex_benchmark(c: &mut Criterion) {
     let mut image = get_image(
         "test_resources/blackbox/github_issue_cases/170050507-1f10f0ef-82ca-4e14-a2d2-4b288ec54809.png",

@@ -2,9 +2,7 @@ use crate::{
     EncodeHints,
     common::{BitMatrix, DetectorRXingResult},
     qrcode::{
-        decoder::{ qrcode_decoder},
-        common::ErrorCorrectionLevel,
-        detector::Detector,
+        common::ErrorCorrectionLevel, decoder::qrcode_decoder, detector::Detector,
         encoder::qrcode_encoder,
     },
 };

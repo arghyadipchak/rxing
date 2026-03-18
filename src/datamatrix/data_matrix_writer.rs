@@ -17,8 +17,8 @@
 
 use crate::{
     BarcodeFormat, EncodeHints, Exceptions, Writer,
-    common::{BitMatrix, CharacterSet, Result},
     common::cpp_essentials::ByteMatrix,
+    common::{BitMatrix, CharacterSet, Result},
 };
 
 use super::encoder::{

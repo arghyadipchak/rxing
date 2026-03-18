@@ -152,9 +152,9 @@ mod otsu_level_binarizer;
 #[cfg(feature = "otsu_level")]
 pub use otsu_level_binarizer::*;
 
-#[cfg(all(feature = "image", feature="decoders"))]
+#[cfg(all(feature = "image", feature = "decoders"))]
 mod adaptive_threshold_binarizer;
-#[cfg(all(feature = "image", feature="decoders"))]
+#[cfg(all(feature = "image", feature = "decoders"))]
 pub use adaptive_threshold_binarizer::*;
 
 pub type BitFieldBaseType = usize;

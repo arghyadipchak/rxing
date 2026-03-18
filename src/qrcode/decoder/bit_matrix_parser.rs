@@ -19,7 +19,7 @@ use crate::{
     common::{BitMatrix, Result},
 };
 
-use super::{DataMask}; 
+use super::DataMask;
 use crate::qrcode::common::{FormatInformation, Version, VersionRef};
 
 /**

@@ -18,7 +18,7 @@
 
 use std::sync::Arc;
 
-    #[cfg(feature = "pdf417")]
+#[cfg(feature = "pdf417")]
 use crate::pdf417::PDF417RXingResultMetadata;
 
 #[cfg(feature = "serde")]
@@ -137,7 +137,7 @@ impl From<String> for RXingResultMetadataType {
             "SUGGESTED_PRICE" | "SUGGESTEDPRICE" => RXingResultMetadataType::SUGGESTED_PRICE,
             "POSSIBLE_COUNTRY" | "POSSIBLECOUNTRY" => RXingResultMetadataType::POSSIBLE_COUNTRY,
             "UPC_EAN_EXTENSION" | "UPCEANEXTENSION" => RXingResultMetadataType::UPC_EAN_EXTENSION,
-                #[cfg(feature = "pdf417")]
+            #[cfg(feature = "pdf417")]
             "PDF417_EXTRA_METADATA" | "PDF417EXTRAMETADATA" => {
                 RXingResultMetadataType::PDF417_EXTRA_METADATA
             }
@@ -219,7 +219,7 @@ pub enum RXingResultMetadataValue {
     /**
      * PDF417-specific metadata
      */
-        #[cfg(feature = "pdf417")]
+    #[cfg(feature = "pdf417")]
     Pdf417ExtraMetadata(Arc<PDF417RXingResultMetadata>),
 
     /**

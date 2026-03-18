@@ -1,8 +1,8 @@
 use crate::qrcode::{
-    cpp_port::Type,
     common::{
         ErrorCorrectionLevel, FORMAT_INFO_MASK_MODEL2, FORMAT_INFO_MASK_QR, FormatInformation,
     },
+    cpp_port::Type,
 };
 
 pub const FORMAT_INFO_MASK_QR_MODEL1: u32 = 0x2825;

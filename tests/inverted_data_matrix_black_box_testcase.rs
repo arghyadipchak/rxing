@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![cfg(all(feature = "image", feature="datamatrix", feature = "decoders"))]
+#![cfg(all(feature = "image", feature = "datamatrix", feature = "decoders"))]
 
 use rxing::{DecodeHintType, DecodeHintValue, MultiFormatReader};
 

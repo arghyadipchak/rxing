@@ -12,11 +12,11 @@ use crate::common::reedsolomon::{
 use crate::common::{
     AIFlag, BitMatrix, BitSource, CharacterSet, ECIStringBuilder, Eci, Result, SymbologyIdentifier,
 };
+use crate::qrcode::common::{ErrorCorrectionLevel, Mode, Version};
 use crate::qrcode::cpp_port::bitmatrix_parser::{
     ReadCodewords, ReadFormatInformation, ReadVersion,
 };
-use crate::qrcode::decoder::{DataBlock};
-use crate::qrcode::common::{ErrorCorrectionLevel, Mode, Version};
+use crate::qrcode::decoder::DataBlock;
 
 /**
 * <p>Given data and error-correction codewords received, possibly corrupted by errors, attempts to

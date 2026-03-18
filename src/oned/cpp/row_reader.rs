@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 use crate::common::Result;
+use crate::common::cpp_essentials::AppendBit;
 use crate::common::cpp_essentials::{
     BarAndSpace, GetPatternRow, NormalizedPattern, PatternRow, PatternType, ToInt, UpdateMinMax,
 };
-use crate::common::cpp_essentials::AppendBit;
 use crate::{RXingResult, common::cpp_essentials::PatternView};
 
 use super::dxfilm_edge_reader::Clock;
