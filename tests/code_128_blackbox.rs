@@ -1,4 +1,4 @@
-#![cfg(feature = "image")]
+#![cfg(all(feature = "image", feature = "oned"))]
 
 use rxing::{BarcodeFormat, MultiFormatReader};
 

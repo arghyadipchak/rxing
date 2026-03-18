@@ -27,7 +27,7 @@ image = {version = "=0.25.8", optional = true, default-features = false}
 imageproc = {version = "0.25", optional = true}
 unicode-segmentation = "1.12"
 codepage-437 = "0.1"
-rxing-one-d-proc-derive = {version = "0.8", path ="./crates/one-d-proc-derive"}
+rxing-one-d-proc-derive = {version = "0.8", path ="./crates/one-d-proc-derive", optional = true}
 num = "0.4"
 svg = {version = "0.18", optional = true}
 resvg = {version = "0.45", optional = true, default-features=false}
@@ -42,7 +42,7 @@ rand = "0.10"
 criterion = "0.7"
 
 [features]
-default = ["image", "client_support", "image_formats", "serde", "encoding_rs"]
+default = ["image", "client_support", "image_formats", "serde", "encoding_rs", "encoders", "decoders", "full_barcode_format_support", "multi_barcode_readers"]
 #/// Enable features required for image manipulation and reading.
 image = ["dep:image", "dep:imageproc"]
 image_formats = [
@@ -72,6 +72,37 @@ decoders = []
 
 #/// Disable all CharacterSet Support, this will break many barcode formats, but may be desirable for some use cases.
 no_character_set_support = []
+
+#/// Enable support for all barcode formats, this is a large amount of code, so it is optional.
+full_barcode_format_support = [
+    "aztec",
+    "maxicode",
+    "qrcode",
+    "datamatrix",
+    "oned",
+    "pdf417"
+]
+
+#//// Enable support for Aztec barcodes
+aztec = []
+
+#//// Enable support for Maxicode barcodes
+maxicode = []
+
+#//// Enable support for QR Code barcodes
+qrcode = []
+
+#//// Enable support for Data Matrix barcodes
+datamatrix = []
+
+#//// Enable support for 1D barcodes
+oned = ["dep:rxing-one-d-proc-derive"]
+
+#//// Enable support for PDF417 barcodes
+pdf417 = []
+
+#/// Enable support multiformat barcode reading
+multi_barcode_readers =  []
 
 #/// Enable support for encoding_rs (modern, efficient)
 encoding_rs = ["dep:encoding_rs"]

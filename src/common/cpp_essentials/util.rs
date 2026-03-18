@@ -1,5 +1,4 @@
 use crate::common::Result;
-use crate::qrcode::cpp_port::detector::AppendBit;
 use crate::{Exceptions, Point};
 
 use super::{Direction, RegressionLineTrait};
@@ -81,6 +80,12 @@ pub fn ToInt(a: &[u32]) -> Option<u32> {
     }
 
     Some(pattern)
+}
+
+pub fn AppendBit(val: &mut i32, bit: bool) {
+    *val <<= 1;
+
+    *val |= i32::from(bit)
 }
 
 pub fn ToIntPos(

@@ -39,10 +39,13 @@ use super::{
     AddressBookAUResultParser, AddressBookDoCoMoResultParser, BizcardResultParser,
     BookmarkDoCoMoResultParser, EmailAddressResultParser, EmailDoCoMoResultParser,
     ExpandedProductResultParser, GeoResultParser, ISBNResultParser, ParsedClientResult,
-    ProductResultParser, SMSMMSResultParser, SMSTOMMSTOResultParser, SMTPResultParser,
+     SMSMMSResultParser, SMSTOMMSTOResultParser, SMTPResultParser,
     TelResultParser, TextParsedRXingResult, URIResultParser, URLTOResultParser, VCardResultParser,
     VEventResultParser, VINResultParser, WifiResultParser,
 };
+
+#[cfg(feature = "oned")]
+use super::{ProductParsedResult, ProductResultParser};
 
 /*
  * <p>Abstract class representing the result of decoding a barcode, as more than
@@ -133,7 +136,7 @@ pub fn parse_result_with_parser<F: Fn(&RXingResult) -> Option<ParsedClientResult
 }
 
 pub fn parseRXingResult(the_rxing_result: &RXingResult) -> ParsedClientResult {
-    let PARSERS: [&ParserFunction; 20] = [
+    let PARSERS: &[&ParserFunction] = &[
         &BookmarkDoCoMoResultParser::parse,
         &AddressBookDoCoMoResultParser::parse,
         &EmailDoCoMoResultParser::parse,
@@ -151,7 +154,10 @@ pub fn parseRXingResult(the_rxing_result: &RXingResult) -> ParsedClientResult {
         &URLTOResultParser::parse,
         &URIResultParser::parse,
         &ISBNResultParser::parse,
+
+        #[cfg(feature = "oned")]
         &ProductResultParser::parse,
+
         &ExpandedProductResultParser::parse,
         &VINResultParser::parse,
     ];

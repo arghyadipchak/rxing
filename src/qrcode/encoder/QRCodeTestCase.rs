@@ -16,10 +16,11 @@
 
 use crate::qrcode::{
     decoder::{ErrorCorrectionLevel, Mode, Version},
-    encoder::ByteMatrix,
 };
 
 use super::QRCode;
+
+use crate::common::cpp_essentials::ByteMatrix;
 
 /**
  * @author satorux@google.com (Satoru Takabayashi) - creator

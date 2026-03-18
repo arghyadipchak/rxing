@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-#![cfg(feature = "image")]
+#![cfg(all(feature = "image", feature = "pdf417"))]
 
 mod common;
 
@@ -25,7 +25,7 @@ use rxing::pdf417::PDF417Reader;
  *
  * @author Guenther Grau
  */
-#[cfg(feature = "image_formats")]
+#[cfg(all(feature = "image_formats", feature = "multi_barcode_readers", feature = "qrcode", feature = "pdf417"))]
 #[test]
 fn pdf417_black_box4_test_case() {
     let mut tester = common::MultiImageSpanAbstractBlackBoxTestCase::new(

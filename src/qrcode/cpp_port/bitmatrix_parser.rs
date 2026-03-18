@@ -10,7 +10,8 @@ use crate::{
     qrcode::decoder::{ErrorCorrectionLevel, FormatInformation, Version, VersionRef},
 };
 
-use super::{Type, data_mask::GetDataMaskBit, detector::AppendBit};
+use super::{Type, data_mask::GetDataMaskBit};
+use crate::common::cpp_essentials::AppendBit;
 
 pub fn getBit(bitMatrix: &BitMatrix, x: u32, y: u32, mirrored: Option<bool>) -> bool {
     let mirrored = mirrored.unwrap_or(false);

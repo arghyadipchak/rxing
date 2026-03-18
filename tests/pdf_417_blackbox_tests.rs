@@ -1,4 +1,4 @@
-#![cfg(feature = "image")]
+#![cfg(all(feature = "image", feature = "pdf417"))]
 
 use rxing::MultiFormatReader;
 

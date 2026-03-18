@@ -18,7 +18,10 @@
 
 #![allow(deprecated)]
 
-use crate::{Dimension, pdf417::encoder::Dimensions};
+use crate::Dimension;
+
+#[cfg(feature = "pdf417")]
+use crate::pdf417::encoder::Dimensions;
 
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
@@ -208,6 +211,7 @@ pub enum EncodeHintValue {
     /**
      * Specifies the matrix shape for Data Matrix (type {@link com.google.zxing.datamatrix.encoder.SymbolShapeHint})
      */
+    #[cfg(feature = "datamatrix")]
     DataMatrixShape(crate::datamatrix::encoder::SymbolShapeHint),
 
     /**
@@ -267,6 +271,7 @@ pub enum EncodeHintValue {
      * Specifies the minimum and maximum number of rows and columns for PDF417 (type
      * {@link com.google.zxing.pdf417.encoder.Dimensions Dimensions}).
      */
+    #[cfg(feature = "pdf417")]
     Pdf417Dimensions(Dimensions),
 
     /**
@@ -367,6 +372,7 @@ pub struct EncodeHints {
     /**
      * Specifies the matrix shape for Data Matrix (type {@link com.google.zxing.datamatrix.encoder.SymbolShapeHint})
      */
+    #[cfg(feature = "datamatrix")]
     pub DataMatrixShape: Option<crate::datamatrix::encoder::SymbolShapeHint>,
 
     /**
@@ -426,6 +432,7 @@ pub struct EncodeHints {
      * Specifies the minimum and maximum number of rows and columns for PDF417 (type
      * {@link com.google.zxing.pdf417.encoder.Dimensions Dimensions}).
      */
+    #[cfg(feature = "pdf417")]
     pub Pdf417Dimensions: Option<Dimensions>,
 
     /**
@@ -512,6 +519,7 @@ impl From<super::EncodingHintDictionary> for EncodeHints {
             match v {
                 EncodeHintValue::ErrorCorrection(v) => new_self.ErrorCorrection = Some(v),
                 EncodeHintValue::CharacterSet(v) => new_self.CharacterSet = Some(v),
+                #[cfg(feature = "datamatrix")]
                 EncodeHintValue::DataMatrixShape(v) => new_self.DataMatrixShape = Some(v),
                 EncodeHintValue::DataMatrixCompact(v) => new_self.DataMatrixCompact = Some(v),
                 EncodeHintValue::MinSize(v) => new_self.MinSize = Some(v),
@@ -519,6 +527,7 @@ impl From<super::EncodingHintDictionary> for EncodeHints {
                 EncodeHintValue::Margin(v) => new_self.Margin = Some(v),
                 EncodeHintValue::Pdf417Compact(v) => new_self.Pdf417Compact = Some(v),
                 EncodeHintValue::Pdf417Compaction(v) => new_self.Pdf417Compaction = Some(v),
+                #[cfg(feature = "pdf417")]
                 EncodeHintValue::Pdf417Dimensions(v) => new_self.Pdf417Dimensions = Some(v),
                 EncodeHintValue::Pdf417AutoEci(v) => new_self.Pdf417AutoEci = Some(v),
                 EncodeHintValue::AztecLayers(v) => new_self.AztecLayers = Some(v),
@@ -542,6 +551,7 @@ impl EncodeHints {
         match hint {
             EncodeHintValue::ErrorCorrection(v) => self.ErrorCorrection = Some(v),
             EncodeHintValue::CharacterSet(v) => self.CharacterSet = Some(v),
+            #[cfg(feature = "datamatrix")]
             EncodeHintValue::DataMatrixShape(v) => self.DataMatrixShape = Some(v),
             EncodeHintValue::DataMatrixCompact(v) => self.DataMatrixCompact = Some(v),
             EncodeHintValue::MinSize(v) => self.MinSize = Some(v),
@@ -549,6 +559,7 @@ impl EncodeHints {
             EncodeHintValue::Margin(v) => self.Margin = Some(v),
             EncodeHintValue::Pdf417Compact(v) => self.Pdf417Compact = Some(v),
             EncodeHintValue::Pdf417Compaction(v) => self.Pdf417Compaction = Some(v),
+            #[cfg(feature = "pdf417")]
             EncodeHintValue::Pdf417Dimensions(v) => self.Pdf417Dimensions = Some(v),
             EncodeHintValue::Pdf417AutoEci(v) => self.Pdf417AutoEci = Some(v),
             EncodeHintValue::AztecLayers(v) => self.AztecLayers = Some(v),

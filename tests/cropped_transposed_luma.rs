@@ -1,3 +1,4 @@
+#[cfg(all(feature="multi_barcode_readers", feature = "oned"))]
 #[test]
 fn test_binarizer_init_empty() {
     assert!(rxing::helpers::detect_multiple_in_luma(DATA.to_vec(), 665, 286).is_ok())

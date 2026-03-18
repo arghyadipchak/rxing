@@ -16,9 +16,11 @@
 
 use crate::{
     BarcodeFormat, Binarizer, BinaryBitmap, DecodeHints, Exceptions, ImmutableReader, Point,
-    RXingResult, RXingResultMetadataType, RXingResultMetadataValue, Reader, common::Result,
-    multi::MultipleBarcodeReader,
+    RXingResult, RXingResultMetadataType, RXingResultMetadataValue, Reader, common::Result
 };
+
+#[cfg(feature = "multi_barcode_readers")]
+use crate::multi::MultipleBarcodeReader;
 
 use super::{
     PDF417RXingResultMetadata, decoder::pdf_417_scanning_decoder, detector::pdf_417_detector,
@@ -64,6 +66,7 @@ impl ImmutableReader for PDF417Reader {
     }
 }
 
+#[cfg(feature = "multi_barcode_readers")]
 impl MultipleBarcodeReader for PDF417Reader {
     fn decode_multiple<B: Binarizer>(
         &mut self,

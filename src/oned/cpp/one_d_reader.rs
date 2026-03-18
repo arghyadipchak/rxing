@@ -8,7 +8,10 @@
 use crate::Binarizer;
 use crate::common::cpp_essentials::{GetPatternRow, PatternRow, PatternView};
 use crate::{BarcodeFormat, BinaryBitmap, DecodeHints, Exceptions, PointT, point};
-use crate::{RXingResult, Reader, multi::MultipleBarcodeReader};
+use crate::{RXingResult, Reader};
+
+#[cfg(feature = "multi_barcode_readers")]
+use crate::multi::MultipleBarcodeReader;
 
 use crate::common::{LineOrientation, Quadrilateral, Result};
 
@@ -429,6 +432,7 @@ impl Reader for ODReader<'_> {
     }
 }
 
+#[cfg(feature = "multi_barcode_readers")]
 impl MultipleBarcodeReader for ODReader<'_> {
     fn decode_multiple<B: crate::Binarizer>(
         &mut self,

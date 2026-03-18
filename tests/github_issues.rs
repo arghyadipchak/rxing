@@ -3,6 +3,7 @@ use std::io::Read;
 use image::DynamicImage;
 use rxing::{Dimension, Reader, Writer};
 
+#[cfg(feature = "multi_barcode_readers")]
 #[test]
 fn issue_27_part_2() {
     let mut data = Vec::new();
@@ -14,7 +15,7 @@ fn issue_27_part_2() {
     rxing::helpers::detect_multiple_in_luma(data, 720, 618).unwrap_or_default();
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix"))]
 #[test]
 fn issue_28() {
     use rxing::DecodeHints;
@@ -24,7 +25,7 @@ fn issue_28() {
     rxing::helpers::detect_multiple_in_file_with_hints("test_resources/blackbox/github_issue_cases/226611447-be6041dc-5b21-42fe-827b-068ccc59082c.png", &mut hints).unwrap_or_default();
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "full_barcode_format_support"))]
 #[test]
 fn dynamsoft_all_supported_formats_image_fault() {
     use rxing::DecodeHints;
@@ -45,7 +46,7 @@ fn dynamsoft_all_supported_formats_image_fault() {
     // ToDo: This test is incomplete. Some that should be detected aren't, and some that are detected shouldn't be.
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "oned"))]
 #[test]
 fn zxing_bench_issue_1() {
     use rxing::BarcodeFormat;
@@ -117,7 +118,7 @@ fn zxing_bench_issue_1() {
     */
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix"))]
 #[test]
 fn issue_48() {
     use rxing::BarcodeFormat;
@@ -158,7 +159,7 @@ fn issue_48() {
     assert_eq!(results[2].getBarcodeFormat(), &BarcodeFormat::DATA_MATRIX);
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "oned"))]
 #[test]
 fn zxing_bench_grey_image_issue_luma8_image() {
     use image::DynamicImage;
@@ -249,7 +250,7 @@ fn zxing_bench_grey_image_issue_luma8_image() {
     */
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "oned"))]
 #[test]
 fn zxing_bench_grey_image_issue_raw_luma8() {
     use rxing::{
@@ -340,7 +341,7 @@ fn zxing_bench_grey_image_issue_raw_luma8() {
     */
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "oned", feature = "qrcode"))]
 #[test]
 fn test_issue_49() {
     use rxing::{
@@ -384,7 +385,7 @@ fn test_issue_49() {
     assert_eq!(EXPECTED_ITF_TEXT, itf_result.getText());
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "oned"))]
 #[test]
 fn test_issue_50() {
     use rxing::{
@@ -422,7 +423,7 @@ fn test_issue_50() {
     assert_eq!(EXPECTED_FORMAT, result.getBarcodeFormat());
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "oned"))]
 #[test]
 fn test_issue_50_2() {
     use rxing::{
@@ -458,7 +459,7 @@ fn test_issue_50_2() {
     assert_eq!(EXPECTED_FORMAT, result.getBarcodeFormat());
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix"))]
 #[test]
 fn issue_51_multiple_detection() {
     use image::DynamicImage;
@@ -528,7 +529,7 @@ fn issue_51_multiple_detection() {
     );
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
 #[test]
 fn issue_58() {
     use rxing::{DecodeHints, Exceptions};
@@ -554,7 +555,7 @@ fn issue_58() {
     );
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "datamatrix"))]
 #[test]
 fn issue_59() {
     use rand::prelude::*;
@@ -605,7 +606,7 @@ fn issue_59() {
     assert_eq!(detection.getText(), data2);
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix", feature = "oned"))]
 #[test]
 fn issue_69_timed() {
     use std::{sync::mpsc, thread, time::Duration};
@@ -636,7 +637,7 @@ fn issue_69_timed() {
     }
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers", feature = "datamatrix", feature = "oned"))]
 #[test]
 fn issue_69() {
     use rxing::DecodeHints;
@@ -669,7 +670,7 @@ fn issue_69() {
      */
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
 #[test]
 fn issue_78_subtract_with_overflow() {
     use rxing::DecodeHints;

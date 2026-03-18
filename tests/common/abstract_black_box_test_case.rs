@@ -31,8 +31,10 @@ use rxing::{
     BarcodeFormat, Binarizer, BinaryBitmap, BufferedImageLuminanceSource, DecodeHintType,
     DecodeHintValue, DecodeHints, RXingResultMetadataType, RXingResultMetadataValue, Reader,
     common::{HybridBinarizer, Result},
-    pdf417::PDF417RXingResultMetadata,
 };
+
+#[cfg(feature = "pdf417")]
+use rxing::pdf417::PDF417RXingResultMetadata;
 
 use super::TestRXingResult;
 
@@ -244,6 +246,13 @@ impl<T: Reader> AbstractBlackBoxTestCase<T> {
                     RXingResultMetadataType::UPC_EAN_EXTENSION => {
                         RXingResultMetadataValue::UpcEanExtension(v)
                     }
+                    #[cfg(feature = "pdf417")]
+                     RXingResultMetadataType::PDF417_EXTRA_METADATA => {
+                        RXingResultMetadataValue::Pdf417ExtraMetadata(Arc::new(
+                            PDF417RXingResultMetadata::default(),
+                        ))
+                    }
+                    #[cfg(feature = "pdf417")]
                     RXingResultMetadataType::PDF417_EXTRA_METADATA => {
                         RXingResultMetadataValue::Pdf417ExtraMetadata(Arc::new(
                             PDF417RXingResultMetadata::default(),

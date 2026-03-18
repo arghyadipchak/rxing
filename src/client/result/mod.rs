@@ -16,7 +16,9 @@ mod ISBNParsedResult;
 mod ISBNResultParser;
 mod ParsedResult;
 mod ParsedResultType;
+#[cfg(feature = "oned")]
 mod ProductParsedResult;
+#[cfg(feature = "oned")]
 mod ProductResultParser;
 mod ResultParser;
 mod SMSMMSResultParser;
@@ -54,6 +56,7 @@ pub use AddressBookParsedResult::*;
 pub use CalendarParsedResult::*;
 pub use EmailAddressParsedResult::*;
 pub use ExpandedProductParsedResult::*;
+#[cfg(feature = "oned")]
 pub use ProductParsedResult::*;
 pub use SMSParsedResult::*;
 pub use URIParsedResult::*;
@@ -77,6 +80,7 @@ mod ISBNParsedResultTestCase;
 #[cfg(test)]
 mod ParsedReaderResultTestCase;
 #[cfg(test)]
+#[cfg(feature = "oned")]
 mod ProductParsedResultTestCase;
 #[cfg(test)]
 mod SMSMMSParsedResultTestCase;
@@ -97,6 +101,7 @@ pub enum ParsedClientResult {
     WiFiResult(WifiParsedRXingResult),
     GeoResult(GeoParsedRXingResult),
     SMSResult(SMSParsedRXingResult),
+    #[cfg(feature = "oned")]
     ProductResult(ProductParsedRXingResult),
     URIResult(URIParsedRXingResult),
     EmailResult(EmailAddressParsedRXingResult),
@@ -116,6 +121,7 @@ impl ParsedRXingResult for ParsedClientResult {
             ParsedClientResult::WiFiResult(a) => a.getType(),
             ParsedClientResult::GeoResult(a) => a.getType(),
             ParsedClientResult::SMSResult(a) => a.getType(),
+            #[cfg(feature = "oned")]
             ParsedClientResult::ProductResult(a) => a.getType(),
             ParsedClientResult::URIResult(a) => a.getType(),
             ParsedClientResult::EmailResult(a) => a.getType(),
@@ -135,6 +141,7 @@ impl ParsedRXingResult for ParsedClientResult {
             ParsedClientResult::WiFiResult(a) => a.getDisplayRXingResult(),
             ParsedClientResult::GeoResult(a) => a.getDisplayRXingResult(),
             ParsedClientResult::SMSResult(a) => a.getDisplayRXingResult(),
+            #[cfg(feature = "oned")]
             ParsedClientResult::ProductResult(a) => a.getDisplayRXingResult(),
             ParsedClientResult::URIResult(a) => a.getDisplayRXingResult(),
             ParsedClientResult::EmailResult(a) => a.getDisplayRXingResult(),

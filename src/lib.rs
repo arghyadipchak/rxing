@@ -1,12 +1,8 @@
 #![allow(non_snake_case)]
 #![allow(non_camel_case_types)]
 
-pub mod aztec;
-
 pub mod common;
 mod exceptions;
-pub mod maxicode;
-pub mod qrcode;
 
 #[cfg(feature = "client_support")]
 pub mod client;
@@ -27,15 +23,10 @@ mod PlanarYUVLuminanceSourceTestCase;
 #[cfg(test)]
 mod rgb_luminance_source_test_case;
 
-pub type EncodingHintDictionary = HashMap<EncodeHintType, EncodeHintValue>;
-pub type DecodingHintDictionary = HashMap<DecodeHintType, DecodeHintValue>;
 pub type MetadataDictionary = HashMap<RXingResultMetadataType, RXingResultMetadataValue>;
 
 mod barcode_format;
 pub use barcode_format::*;
-
-mod encode_hints;
-pub use encode_hints::*;
 
 /// Callback which is invoked when a possible result point (significant
 /// point in the barcode image such as a corner) is found.
@@ -44,70 +35,134 @@ pub type PointCallback = Arc<dyn Fn(Point) + Send + Sync>;
 /** Temporary type to ease refactoring and keep backwards-compatibility */
 pub type RXingResultPointCallback = PointCallback;
 
-mod decode_hints;
-pub use decode_hints::*;
-
-mod writer;
-pub use writer::*;
-
-mod reader;
-pub use reader::*;
-
-mod rxing_result_metadata;
-pub use rxing_result_metadata::*;
-
-mod rxing_result;
-pub use rxing_result::*;
-
-mod result_point;
-pub use result_point::*;
-
-pub mod result_point_utils;
-
-mod rxing_result_point;
-pub use rxing_result_point::*;
 
 mod dimension;
 pub use dimension::*;
 
-mod binarizer;
-pub use binarizer::*;
-
-mod binary_bitmap;
-pub use binary_bitmap::*;
-
-mod luminance_source;
-pub use luminance_source::*;
-
-mod planar_yuv_luminance_source;
-pub use planar_yuv_luminance_source::*;
-
-mod rgb_luminance_source;
-pub use rgb_luminance_source::*;
-
+// The core encoding and decoding machinery lives in these submodules.
+#[cfg(feature = "aztec")]
+pub mod aztec;
+#[cfg(feature = "maxicode")]
+pub mod maxicode;
+#[cfg(feature = "qrcode")]
+pub mod qrcode;
+#[cfg(feature = "datamatrix")]
 pub mod datamatrix;
-pub mod multi;
+#[cfg(feature = "oned")]
 pub mod oned;
+#[cfg(feature = "pdf417")]
 pub mod pdf417;
 
-mod multi_format_writer;
-pub use multi_format_writer::*;
-mod multi_use_multi_format_reader;
-pub use multi_use_multi_format_reader::*;
-
-mod multi_format_reader;
-pub use multi_format_reader::*;
+#[cfg(feature = "multi_barcode_readers")]
+pub mod multi;
 
 // Simple methods to help detect barcodes in common situations
 pub mod helpers;
-
-mod luma_luma_source;
-pub use luma_luma_source::*;
-
-mod filtered_image_reader;
-pub use filtered_image_reader::*;
 
 #[cfg(feature = "svg_read")]
 mod svg_luminance_source;
 #[cfg(feature = "svg_read")]
 pub use svg_luminance_source::*;
+
+
+// Reading
+#[cfg(feature = "decoders")]
+mod decode_hints;
+#[cfg(feature = "decoders")]
+pub use decode_hints::*;
+
+#[cfg(feature = "decoders")]
+mod multi_use_multi_format_reader;
+#[cfg(feature = "decoders")]
+pub use multi_use_multi_format_reader::*;
+
+#[cfg(feature = "decoders")]
+mod multi_format_reader;
+#[cfg(feature = "decoders")]
+pub use multi_format_reader::*;
+
+#[cfg(feature = "decoders")]
+mod reader;
+#[cfg(feature = "decoders")]
+pub use reader::*;
+
+#[cfg(feature = "decoders")]
+mod rxing_result_metadata;
+#[cfg(feature = "decoders")]
+pub use rxing_result_metadata::*;
+
+#[cfg(feature = "decoders")]
+mod rxing_result;
+#[cfg(feature = "decoders")]
+pub use rxing_result::*;
+
+#[cfg(feature = "decoders")]
+mod result_point;
+#[cfg(feature = "decoders")]
+pub use result_point::*;
+
+#[cfg(feature = "decoders")]
+pub mod result_point_utils;
+
+#[cfg(feature = "decoders")]
+mod rxing_result_point;
+#[cfg(feature = "decoders")]
+pub use rxing_result_point::*;
+
+#[cfg(feature = "decoders")]
+pub type DecodingHintDictionary = HashMap<DecodeHintType, DecodeHintValue>;
+
+// Reading Sources
+#[cfg(feature = "decoders")]
+mod binarizer;
+#[cfg(feature = "decoders")]
+pub use binarizer::*;
+
+#[cfg(feature = "decoders")]
+mod binary_bitmap;
+#[cfg(feature = "decoders")]
+pub use binary_bitmap::*;
+
+#[cfg(feature = "decoders")]
+mod luminance_source;
+#[cfg(feature = "decoders")]
+pub use luminance_source::*;
+
+#[cfg(feature = "decoders")]
+mod planar_yuv_luminance_source;
+#[cfg(feature = "decoders")]
+pub use planar_yuv_luminance_source::*;
+
+#[cfg(feature = "decoders")]
+mod rgb_luminance_source;
+#[cfg(feature = "decoders")]
+pub use rgb_luminance_source::*;
+
+#[cfg(feature = "decoders")]
+mod luma_luma_source;
+#[cfg(feature = "decoders")]
+pub use luma_luma_source::*;
+
+// Writing
+#[cfg(feature = "encoders")]
+mod encode_hints;
+#[cfg(feature = "encoders")]
+pub use encode_hints::*;
+
+#[cfg(feature = "encoders")]
+pub type EncodingHintDictionary = HashMap<EncodeHintType, EncodeHintValue>;
+
+#[cfg(feature = "encoders")]
+mod filtered_image_reader;
+#[cfg(feature = "encoders")]
+pub use filtered_image_reader::*;
+
+#[cfg(feature = "encoders")]
+mod multi_format_writer;
+#[cfg(feature = "encoders")]
+pub use multi_format_writer::*;
+
+#[cfg(feature = "encoders")]
+mod writer;
+#[cfg(feature = "encoders")]
+pub use writer::*;

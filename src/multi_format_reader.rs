@@ -17,14 +17,32 @@
 use std::collections::HashSet;
 
 use crate::common::Result;
+#[cfg(feature = "oned")]
 use crate::oned::cpp::ODReader;
+#[cfg(feature = "qrcode")]
 use crate::qrcode::cpp_port::QrReader;
 use crate::{
-    BarcodeFormat, Binarizer, BinaryBitmap, Exceptions, RXingResult, Reader, aztec::AztecReader,
-    datamatrix::DataMatrixReader, maxicode::MaxiCodeReader, oned::MultiFormatOneDReader,
-    pdf417::PDF417Reader, qrcode::QRCodeReader,
+    BarcodeFormat, Binarizer, BinaryBitmap, Exceptions, RXingResult, Reader,
 };
 use crate::{DecodeHints, ONE_D_FORMATS};
+
+#[cfg(feature = "aztec")]
+use crate::aztec::AztecReader;
+
+#[cfg(feature = "datamatrix")]
+use crate::datamatrix::DataMatrixReader;
+
+#[cfg(feature = "maxicode")]
+use crate::maxicode::MaxiCodeReader;
+
+#[cfg(feature = "oned")]
+use crate::oned::MultiFormatOneDReader;
+
+#[cfg(feature = "pdf417")]
+use crate::pdf417::PDF417Reader;
+
+#[cfg(feature = "qrcode")]
+use crate::qrcode::QRCodeReader;
 
 /**
  * MultiFormatReader is a convenience class and the main entry point into the library for most uses.
@@ -39,6 +57,7 @@ pub struct MultiFormatReader {
     hints: DecodeHints,
     possible_formats: HashSet<BarcodeFormat>,
     try_harder: bool,
+    #[cfg(feature = "oned")]
     one_d_reader: MultiFormatOneDReader,
 }
 
@@ -75,6 +94,7 @@ impl Reader for MultiFormatReader {
     }
 
     fn reset(&mut self) {
+        #[cfg(feature = "oned")]
         self.one_d_reader.reset();
     }
 }
@@ -116,7 +136,11 @@ impl MultiFormatReader {
         } else {
             HashSet::new()
         };
-        self.one_d_reader = MultiFormatOneDReader::new(hints);
+
+        #[cfg(feature = "oned")]
+        {
+            self.one_d_reader = MultiFormatOneDReader::new(hints);
+        }
     }
 
     pub fn decode_internal<B: Binarizer>(
@@ -153,12 +177,14 @@ impl MultiFormatReader {
                 .iter()
                 .any(|e| self.possible_formats.contains(e));
             if one_d && !self.try_harder {
+                #[cfg(feature = "oned")]
                 if let Ok(res) = self.one_d_reader.decode_with_hints(image, &self.hints) {
                     return Ok(res);
                 }
             }
             for possible_format in self.possible_formats.iter() {
                 let res = match possible_format {
+                    #[cfg(feature = "qrcode")]
                     BarcodeFormat::QR_CODE => {
                         let cpp = QrReader.decode_with_hints(image, &self.hints);
                         if cpp.is_ok() {
@@ -167,18 +193,25 @@ impl MultiFormatReader {
                             QRCodeReader.decode_with_hints(image, &self.hints)
                         }
                     }
+                    #[cfg(feature = "qrcode")]
                     BarcodeFormat::MICRO_QR_CODE => QrReader.decode_with_hints(image, &self.hints),
+                    #[cfg(feature = "qrcode")]
                     BarcodeFormat::RECTANGULAR_MICRO_QR_CODE => {
                         QrReader.decode_with_hints(image, &self.hints)
                     }
+                    #[cfg(feature = "datamatrix")]
                     BarcodeFormat::DATA_MATRIX => {
                         DataMatrixReader.decode_with_hints(image, &self.hints)
                     }
+                    #[cfg(feature = "aztec")]
                     BarcodeFormat::AZTEC => AztecReader.decode_with_hints(image, &self.hints),
+                    #[cfg(feature = "pdf417")]
                     BarcodeFormat::PDF_417 => PDF417Reader.decode_with_hints(image, &self.hints),
+                    #[cfg(feature = "maxicode")]
                     BarcodeFormat::MAXICODE => {
                         MaxiCodeReader::default().decode_with_hints(image, &self.hints)
                     }
+                    #[cfg(feature = "oned")]
                     BarcodeFormat::DXFilmEdge => {
                         ODReader::new(&self.hints).decode_with_hints(image, &self.hints)
                     }
@@ -188,6 +221,8 @@ impl MultiFormatReader {
                     return res;
                 }
             }
+
+            #[cfg(feature = "oned")]
             if one_d && self.try_harder {
                 if let Ok(res) = self.one_d_reader.decode_with_hints(image, &self.hints) {
                     return Ok(res);
@@ -195,34 +230,43 @@ impl MultiFormatReader {
             }
         } else {
             if !self.try_harder {
+                #[cfg(feature = "oned")]
                 if let Ok(res) = self.one_d_reader.decode_with_hints(image, &self.hints) {
                     return Ok(res);
                 }
             }
 
+            #[cfg(feature = "qrcode")]
             if let Ok(res) = QrReader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
+            #[cfg(feature = "qrcode")]
             if let Ok(res) = QRCodeReader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
+            #[cfg(feature = "datamatrix")]
             if let Ok(res) = DataMatrixReader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
+            #[cfg(feature = "aztec")]   
             if let Ok(res) = AztecReader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
+            #[cfg(feature = "pdf417")]
             if let Ok(res) = PDF417Reader.decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
+            #[cfg(feature = "maxicode")]
             if let Ok(res) = MaxiCodeReader::default().decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
+            #[cfg(feature = "oned")]
             if let Ok(res) = ODReader::new(&self.hints).decode_with_hints(image, &self.hints) {
                 return Ok(res);
             }
 
             if self.try_harder {
+                #[cfg(feature = "oned")]
                 if let Ok(res) = self.one_d_reader.decode_with_hints(image, &self.hints) {
                     return Ok(res);
                 }

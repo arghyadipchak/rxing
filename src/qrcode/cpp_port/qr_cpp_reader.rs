@@ -119,9 +119,11 @@
 
 use crate::{
     BarcodeFormat, DecodeHints, Exceptions, ImmutableReader, RXingResult, Reader,
-    common::{DetectorRXingResult, cpp_essentials::ConcentricPattern},
-    multi::MultipleBarcodeReader,
+    common::{DetectorRXingResult, cpp_essentials::ConcentricPattern}
 };
+
+#[cfg(feature = "multi_barcode_readers")]
+use crate::multi::MultipleBarcodeReader;
 
 use super::{
     decoder::Decode,
@@ -161,6 +163,7 @@ impl ImmutableReader for QrReader {
     }
 }
 
+#[cfg(feature = "multi_barcode_readers")]
 impl MultipleBarcodeReader for QrReader {
     fn decode_multiple<B: crate::Binarizer>(
         &mut self,

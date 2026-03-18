@@ -20,8 +20,8 @@ use crate::{
     qrcode::decoder::{ErrorCorrectionLevel, Version},
 };
 
-use super::{ByteMatrix, QRCode, mask_util};
-
+use super::{ QRCode, mask_util};
+use crate::common::cpp_essentials::ByteMatrix;
 /*
  * @author satorux@google.com (Satoru Takabayashi) - creator
  * @author dswitkin@google.com (Daniel Switkin) - ported from C++

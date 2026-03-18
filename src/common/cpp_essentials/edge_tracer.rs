@@ -3,8 +3,9 @@ use std::sync::{Arc, RwLock};
 use crate::{
     Exceptions, Point,
     common::{BitMatrix, Result},
-    qrcode::encoder::ByteMatrix,
 };
+
+use crate::common::cpp_essentials::ByteMatrix;
 
 use super::{BitMatrixCursorTrait, Direction, RegressionLineTrait, StepResult, Value};
 

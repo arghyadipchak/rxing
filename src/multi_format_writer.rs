@@ -16,16 +16,26 @@
 
 use crate::{
     BarcodeFormat, EncodeHints, Exceptions, Writer,
-    aztec::AztecWriter,
-    common::Result,
-    datamatrix::DataMatrixWriter,
-    oned::{
+    common::Result
+};
+
+#[cfg(feature = "oned")]
+use crate::oned::{
         CodaBarWriter, Code39Writer, Code93Writer, Code128Writer, EAN8Writer, EAN13Writer,
         ITFWriter, TelepenWriter, UPCAWriter, UPCEWriter,
-    },
-    pdf417::PDF417Writer,
-    qrcode::QRCodeWriter,
-};
+    };
+
+    #[cfg(feature = "aztec")]
+    use crate::aztec::AztecWriter;
+
+    #[cfg(feature = "datamatrix")]
+    use crate::datamatrix::DataMatrixWriter;
+
+    #[cfg(feature = "pdf417")]
+    use crate::pdf417::PDF417Writer;
+
+    #[cfg(feature = "qrcode")]
+    use crate::qrcode::QRCodeWriter;
 
 /**
  * This is a factory class which finds the appropriate Writer subclass for the BarcodeFormat
@@ -56,19 +66,33 @@ impl Writer for MultiFormatWriter {
         hints: &EncodeHints,
     ) -> Result<crate::common::BitMatrix> {
         let writer: Box<dyn Writer> = match format {
+            #[cfg(feature = "oned")]
             BarcodeFormat::EAN_8 => Box::<EAN8Writer>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::UPC_E => Box::<UPCEWriter>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::EAN_13 => Box::<EAN13Writer>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::UPC_A => Box::<UPCAWriter>::default(),
+            #[cfg(feature = "qrcode")]
             BarcodeFormat::QR_CODE => Box::<QRCodeWriter>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::CODE_39 => Box::<Code39Writer>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::CODE_93 => Box::<Code93Writer>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::CODE_128 => Box::<Code128Writer>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::ITF => Box::<ITFWriter>::default(),
+            #[cfg(feature = "pdf417")]
             BarcodeFormat::PDF_417 => Box::<PDF417Writer>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::CODABAR => Box::<CodaBarWriter>::default(),
+            #[cfg(feature = "datamatrix")]
             BarcodeFormat::DATA_MATRIX => Box::<DataMatrixWriter>::default(),
+            #[cfg(feature = "oned")]
             BarcodeFormat::TELEPEN => Box::<TelepenWriter>::default(),
+            #[cfg(feature = "aztec")]
             BarcodeFormat::AZTEC => Box::<AztecWriter>::default(),
             _ => {
                 return Err(Exceptions::illegal_argument_with(format!(
