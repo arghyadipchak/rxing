@@ -23,7 +23,7 @@ use crate::common::Result;
     not(feature = "no_character_set_support")
 ))]
 compile_error!(
-    "Either feature 'encoding_rs' or 'legacy_encoding' must be enabled for CharacterSet support."
+    "Either feature 'encoding_rs' or 'legacy_encoding' must be enabled for CharacterSet support. If your intention is to not include CharacterSet support, please enable the 'no_character_set_support' feature."
 );
 
 /**
@@ -479,10 +479,7 @@ impl CharacterSet {
     }
 }
 
-#[cfg(any(
-    all(not(feature = "encoding_rs"), not(feature = "legacy_encoding")),
-    feature = "no_character_set_support"
-))]
+#[cfg(feature = "no_character_set_support")]
 impl CharacterSet {
     pub fn encode(&self, _input: &str) -> Result<Vec<u8>> {
         unimplemented!()
