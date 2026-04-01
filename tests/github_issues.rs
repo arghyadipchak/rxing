@@ -700,3 +700,19 @@ fn issue_78_subtract_with_overflow() {
 
     rxing::helpers::detect_multiple_in_luma_with_hints(data_3, 672, 504, &mut hints).unwrap_or_default();
 }
+
+#[cfg(feature = "image")]
+#[test]
+fn issue_83_subtract_with_overflow() {
+    use rxing::DecodeHints;
+
+    let mut hints: DecodeHints =
+        DecodeHints::default().with(rxing::DecodeHintValue::TryHarder(true));
+
+    let mut data = Vec::new();
+    std::fs::File::open("test_resources/blackbox/github_issue_cases/subtract-with-overflow-readsymmetricpattern-issue-83.bin")
+        .unwrap()
+        .read_to_end(&mut data)
+        .unwrap();
+    rxing::helpers::detect_multiple_in_luma_with_hints(data, 75, 80, &mut hints).unwrap_or_default();
+}
