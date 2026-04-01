@@ -747,7 +747,7 @@ fn issue_78_subtract_with_overflow() {
         .unwrap_or_default();
 }
 
-#[cfg(feature = "image")]
+#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
 #[test]
 fn issue_83_subtract_with_overflow() {
     use rxing::DecodeHints;
