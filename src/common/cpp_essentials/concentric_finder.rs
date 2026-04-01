@@ -73,7 +73,7 @@ pub fn ReadSymmetricPattern<const N: usize, Cursor: BitMatrixCursorTrait>(
             return None;
         }
     }
-    res[s_2 as usize] -= 1; // the starting pixel has been counted twice, fix this
+    res[s_2 as usize] = res[s_2 as usize].saturating_sub(1); // the starting pixel has been counted twice, fix this
 
     Some(res)
 }
