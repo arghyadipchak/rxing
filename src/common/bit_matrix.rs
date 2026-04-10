@@ -792,9 +792,9 @@ impl From<&BitMatrix> for image::DynamicImage {
 
         for (x, y, pixel) in pixels.enumerate_pixels_mut() {
             let new_pixel = if value.get(x, y) {
-                image::Rgb([0, 0, 0])
+                image::Luma([0])
             } else {
-                image::Rgb([u8::MAX, u8::MAX, u8::MAX])
+                image::Luma([u8::MAX])
             };
             *pixel = new_pixel
         }
