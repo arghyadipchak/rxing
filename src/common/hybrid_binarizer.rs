@@ -174,7 +174,7 @@ impl<LS: LuminanceSource> HybridBinarizer<LS> {
         sub_height: u32,
         width: u32,
         height: u32,
-        black_points: &[Vec<u32>],
+        black_points: &[u32],
         matrix: &mut BitMatrix,
     ) {
         let maxYOffset = height - BLOCK_SIZE as u32;
@@ -192,7 +192,7 @@ impl<LS: LuminanceSource> HybridBinarizer<LS> {
                 let mut sum = 0;
                 for z in -2..=2 {
                     // for (int z = -2; z <= 2; z++) {
-                    let blackRow = &black_points[(top as i32 + z) as usize];
+                    let blackRow = &black_points[((top as i32 + z) as u32 * sub_width) as usize..];
                     sum += blackRow[(left - 2) as usize]
                         + blackRow[(left - 1) as usize]
                         + blackRow[left as usize]
@@ -241,10 +241,10 @@ impl<LS: LuminanceSource> HybridBinarizer<LS> {
         subHeight: u32,
         width: u32,
         height: u32,
-    ) -> Vec<Vec<u32>> {
+    ) -> Vec<u32> {
         let maxYOffset = height as usize - BLOCK_SIZE;
         let maxXOffset = width as usize - BLOCK_SIZE;
-        let mut blackPoints = vec![vec![0; subWidth as usize]; subHeight as usize];
+        let mut blackPoints = vec![0; (subHeight * subWidth) as usize];
         for y in 0..subHeight {
             // for (int y = 0; y < subHeight; y++) {
             let yoffset = u32::min(y << BLOCK_SIZE_POWER, maxYOffset as u32);
@@ -304,17 +304,17 @@ impl<LS: LuminanceSource> HybridBinarizer<LS> {
                         // the boundaries is used for the interior.
 
                         // The (min < bp) is arbitrary but works better than other heuristics that were tried.
-                        let average_neighbor_black_point: u32 = (blackPoints[y as usize - 1]
-                            [x as usize]
-                            + (2 * blackPoints[y as usize][x as usize - 1])
-                            + blackPoints[y as usize - 1][x as usize - 1])
+                        let average_neighbor_black_point: u32 = (blackPoints
+                            [(y as usize - 1) * subWidth as usize + x as usize]
+                            + (2 * blackPoints[y as usize * subWidth as usize + x as usize - 1])
+                            + blackPoints[(y as usize - 1) * subWidth as usize + x as usize - 1])
                             / 4;
                         if (min as u32) < average_neighbor_black_point {
                             average = average_neighbor_black_point;
                         }
                     }
                 }
-                blackPoints[y as usize][x as usize] = average;
+                blackPoints[(y * subWidth + x) as usize] = average;
             }
         }
         blackPoints

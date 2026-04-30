@@ -32,7 +32,7 @@ impl<LS: LuminanceSource> AdaptiveThresholdBinarizer<LS> {
             let Some(buff): Option<ImageBuffer<Luma<u8>, Vec<u8>>> = ImageBuffer::from_vec(
                 self.source.get_width() as u32,
                 self.source.get_height() as u32,
-                self.source.get_matrix(),
+                self.source.get_matrix().into_owned(),
             ) else {
                 return Err(Exceptions::ILLEGAL_ARGUMENT);
             };

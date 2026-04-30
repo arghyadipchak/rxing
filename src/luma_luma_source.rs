@@ -46,8 +46,8 @@ impl LuminanceSource for Luma8LuminanceSource {
             })
     }
 
-    fn get_matrix(&self) -> Vec<u8> {
-        self.data.clone().into()
+    fn get_matrix(&self) -> Cow<'_, [u8]> {
+        Cow::Borrowed(&self.data)
     }
 
     fn get_width(&self) -> usize {
