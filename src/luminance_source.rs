@@ -61,7 +61,7 @@ pub trait LuminanceSource {
      *         larger than width * height bytes on some platforms. Do not modify the contents
      *         of the result.
      */
-    fn get_matrix(&self) -> Vec<u8>;
+    fn get_matrix(&self) -> Cow<'_, [u8]>;
 
     /**
      * @return The width of the bitmap.

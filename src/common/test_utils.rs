@@ -57,8 +57,8 @@ impl LuminanceSource for MockLuminanceSource {
         column
     }
 
-    fn get_matrix(&self) -> Vec<u8> {
-        self.luminances.clone()
+    fn get_matrix(&self) -> Cow<'_, [u8]> {
+        Cow::Borrowed(&self.luminances)
     }
 
     fn get_width(&self) -> usize {

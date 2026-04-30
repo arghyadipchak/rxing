@@ -16,7 +16,7 @@ impl LuminanceSource for SVGLuminanceSource {
         self.0.get_column(x)
     }
 
-    fn get_matrix(&self) -> Vec<u8> {
+    fn get_matrix(&self) -> Cow<'_, [u8]> {
         self.0.get_matrix()
     }
 

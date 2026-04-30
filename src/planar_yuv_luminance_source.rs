@@ -265,7 +265,7 @@ impl LuminanceSource for PlanarYUVLuminanceSource {
         unimplemented!()
     }
 
-    fn get_matrix(&self) -> Vec<u8> {
+    fn get_matrix(&self) -> Cow<'_, [u8]> {
         let width = self.get_width();
         let height = self.get_height();
 
@@ -276,7 +276,7 @@ impl LuminanceSource for PlanarYUVLuminanceSource {
             if self.invert {
                 v = self.invert_block_of_bytes(v);
             }
-            return v;
+            return Cow::Owned(v);
         }
 
         let area = width * height;
@@ -289,7 +289,7 @@ impl LuminanceSource for PlanarYUVLuminanceSource {
             if self.invert {
                 matrix = self.invert_block_of_bytes(matrix);
             }
-            return matrix;
+            return Cow::Owned(matrix);
         }
 
         // Otherwise copy one cropped row at a time.
@@ -304,7 +304,7 @@ impl LuminanceSource for PlanarYUVLuminanceSource {
             matrix = self.invert_block_of_bytes(matrix);
         }
 
-        matrix
+        Cow::Owned(matrix)
     }
 
     fn get_width(&self) -> usize {

@@ -48,16 +48,16 @@ fn testMatrix() {
     let SOURCE = RGBLuminanceSource::new_with_width_height_pixels(3, 3, SRC_DATA.as_ref());
 
     assert_eq!(
-        vec![0x00, 0x7F, 0xFF, 0x3F, 0x7F, 0x3F, 0x3F, 0x7F, 0x3F],
-        SOURCE.get_matrix()
+        &[0x00, 0x7F, 0xFF, 0x3F, 0x7F, 0x3F, 0x3F, 0x7F, 0x3F],
+        &*SOURCE.get_matrix()
     );
     let croppedFullWidth = SOURCE.crop(0, 1, 3, 2).unwrap();
     assert_eq!(
-        vec![0x3F, 0x7F, 0x3F, 0x3F, 0x7F, 0x3F],
-        croppedFullWidth.get_matrix()
+        &[0x3F, 0x7F, 0x3F, 0x3F, 0x7F, 0x3F],
+        &*croppedFullWidth.get_matrix()
     );
     let croppedCorner = SOURCE.crop(1, 1, 2, 2).unwrap();
-    assert_eq!(vec![0x7F, 0x3F, 0x7F, 0x3F], croppedCorner.get_matrix());
+    assert_eq!(&[0x7F, 0x3F, 0x7F, 0x3F], &*croppedCorner.get_matrix());
 }
 
 #[test]
