@@ -90,6 +90,34 @@ fn main() {
 ```
 
 ## Latest Release Notes
+* *v0.9.0* -> Refactor crate features. This is a  **breaking change**.
+
+    This version allows buiding the crate with much more granularity, only including features, symbologies, and 
+    capabilities necessary for the task. Consumers who do not use `default-features = false` will likely not need
+    to make any changes to their build or configuration.
+
+    The new default features list for 0.9.0 is:
+    ```yaml
+    default = [
+        "image",
+        "client_support",
+        "image_formats",
+        "serde",
+        "encoding_rs",
+        "encoders",
+        "decoders",
+        "full_barcode_format_support",
+        "multi_barcode_readers"
+    ]
+    ```
+
+    For instance, a program that needs only the ability to decode qr_codes could select the following features.
+    `image, image_formats, encoding_rs, decoders, qrcode`. Similarly, a use case where encoding Aztec codes was
+    all that was required would likely want to use: `image, image_formats, encoding_rs, encoders, aztec`. This
+    change has been tested against the full test suite, which has required some modification of the test suite.
+    
+    Please file issues if any problems are detected.
+
 * *v0.8.5* -> DX Film Edge Support added (decode only). Also adds several enhancements to performance and memory.
 
     The default character encoding backend has changed to the more modern `encoding_rs`. This should bring some slight
