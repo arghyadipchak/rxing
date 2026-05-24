@@ -1,8 +1,9 @@
-// /*
-// * Copyright 2016 Nu-book Inc.
-// * Copyright 2016 ZXing authors
-// */
-// // SPDX-License-Identifier: Apache-2.0
+/*
+* Copyright 2016 Nu-book Inc.
+* Copyright 2016 ZXing authors
+* Copyright 2023 gitlost
+*/
+// SPDX-License-Identifier: Apache-2.0
 
 use crate::{
     Exceptions,

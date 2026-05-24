@@ -1,3 +1,11 @@
+/*
+* Copyright 2016 Nu-book Inc.
+* Copyright 2016 ZXing authors
+* Copyright 2023 Axel Waggershauser
+* Copyright 2023 gitlost
+*/
+// SPDX-License-Identifier: Apache-2.0
+
 use crate::qrcode::{
     common::{
         ErrorCorrectionLevel, FORMAT_INFO_MASK_MODEL2, FORMAT_INFO_MASK_QR, FormatInformation,

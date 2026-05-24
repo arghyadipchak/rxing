@@ -1,3 +1,9 @@
+/*
+* Copyright 2016 Nu-book Inc.
+* Copyright 2016 ZXing authors
+*/
+// SPDX-License-Identifier: Apache-2.0
+
 #[derive(Debug, Hash, PartialEq, Eq, Clone, Copy)]
 pub enum Type {
     Model1,

@@ -1,3 +1,7 @@
+/*
+* Copyright 2020 Axel Waggershauser
+*/
+// SPDX-License-Identifier: Apache-2.0
 use crate::{
     Point,
     common::{

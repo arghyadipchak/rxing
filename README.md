@@ -1,6 +1,8 @@
 # rxing - cRustacean Crossing
 
-This is a port of the ZXing (https://github.com/zxing/zxing) java barcode library to pure rust. Conversion was done by hand. Original license resides with the authors of zxing.
+This is a port of the [ZXing](https://github.com/zxing/zxing) Java barcode library to pure Rust, converted by hand. ZXing is licensed under the Apache License 2.0; copyright remains with the original ZXing authors.
+
+Additional features were ported from [zxing-cpp](https://github.com/zxing-cpp/zxing-cpp), specifically enhancements to the QR Code, Datamatrix, and DX Film reader components. zxing-cpp is also licensed under the Apache License 2.0; copyright remains with the zxing-cpp contributors.
 
 Porting of the testing library is incomplete. Currently all positive tests are implemented. Negative verfication tests are not implemented.
 
@@ -209,4 +211,6 @@ fn main() {
 Currently tracking zxing 3.5.1
 
 ## Copyright notes
-The original license / copyright remains with the zxing developers. The license / copyright for the ported components of the c++ port remain with the developers of that port, where applicable.
+rxing is licensed under the Apache License 2.0.
+
+The ZXing library is licensed under the Apache License 2.0; copyright remains with the ZXing authors. Portions of this crate are ported from zxing-cpp, which is also licensed under the Apache License 2.0; copyright remains with the zxing-cpp contributors.
