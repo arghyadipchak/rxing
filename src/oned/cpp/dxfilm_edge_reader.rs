@@ -5,7 +5,8 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use crate::{
-    BarcodeFormat, DecodeHints, Exceptions, PointI, RXingResult,
+    BarcodeFormat, DecodeHints, Exceptions, PointI, RXingResult, RXingResultMetadataType,
+    RXingResultMetadataValue,
     common::{
         BitArray,
         cpp_essentials::{FindLeftGuardBy, FixedPattern, IsRightGuard, PatternView, ToIntPos},
@@ -185,19 +186,19 @@ impl RowReader for DXFilmEdgeReader<'_> {
 
         // Only consider rows below the center row of the image
 
-        if self.options.TryHarder != Some(true) && rowNumber < dxState.centerRow {
+        if self.options.TryHarder != Some(true) && rowNumber < dxState.centerRow.saturating_sub(1) {
             return Err(Exceptions::NOT_FOUND);
         }
 
         // Look for a pattern that is part of both the clock as well as the data track (ommitting the first bar)
         let Is4x1 = |view: &PatternView, spaceInPixel: Option<f32>| {
             let spaceInPixel = spaceInPixel.unwrap_or_default();
-            // find min/max of 4 consecutive bars/spaces and make sure they are close together
-            let tmp_arr: [u16; 4] = [view[1], view[2], view[3], view[4]];
-            let m = *tmp_arr.iter().min().unwrap_or(&0);
-            let M = *tmp_arr.iter().max().unwrap_or(&0);
-            // let [m, M] = std::minmax({view[1], view[2], view[3], view[4]});
-            M <= m * 4 / 3 + 1 && spaceInPixel > m as f32 / 2.0
+            let a = view[1] as i32;
+            let b = view[2] as i32;
+            let c = view[3] as i32;
+            let d = view[4] as i32;
+            let diff = (a - b).abs() + (a - c).abs() + (a - d).abs();
+            diff < a && spaceInPixel > view[1] as f32 / 2.0
         };
 
         // 12 is the minimum size of the data track (at least one product class bit + one parity bit)
@@ -236,6 +237,12 @@ impl RowReader for DXFilmEdgeReader<'_> {
         let Some(clock) = dxState.findClock(xStart as u32, rowNumber) else {
             return Err(Exceptions::NOT_FOUND);
         };
+
+        // Verify start pattern spans approximately 5 modules (prevents false positives)
+        let start_width: f32 = next.sum(Some(DATA_START_PATTERN.size())) as f32;
+        if (start_width / clock.moduleSize() - 5.0).abs() > 1.0 {
+            return Err(Exceptions::NOT_FOUND);
+        }
 
         // Skip the data start pattern (black, white, black, white, black)
         // The first signal bar is always white: this is the
@@ -340,7 +347,7 @@ impl RowReader for DXFilmEdgeReader<'_> {
         clock.xStart = xStart as u32;
         clock.xStop = xStop as u32;
 
-        Ok(RXingResult::new(
+        let mut result = RXingResult::new(
             &txt,
             dataBits.into(),
             vec![
@@ -350,6 +357,11 @@ impl RowReader for DXFilmEdgeReader<'_> {
                 point(xStop as f32, rowNumber as f32),
             ],
             BarcodeFormat::DXFilmEdge,
-        ))
+        );
+        result.putMetadata(
+            RXingResultMetadataType::SYMBOLOGY_IDENTIFIER,
+            RXingResultMetadataValue::SymbologyIdentifier("]XF".to_owned()),
+        );
+        Ok(result)
     }
 }

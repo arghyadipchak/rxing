@@ -29,7 +29,7 @@ use crate::{
         BitMatrix, PerspectiveTransform, Quadrilateral,
         cpp_essentials::{
             BitMatrixCursorTrait, ConcentricPattern, Direction, EdgeTracer, FixedPattern,
-            GetPatternRowTP, IsPattern, LocateConcentricPattern, PatternRow, PatternType,
+            FitSquareToPoints, GetPatternRowTP, IsPattern, LocateConcentricPattern, PatternRow, PatternType,
             PatternView, ReadSymmetricPattern, RegressionLine, RegressionLineTrait,
         },
     },
@@ -58,7 +58,8 @@ fn FindPattern(view: PatternView<'_>) -> Result<PatternView<'_>> {
         LEN,
         |view: &PatternView, spaceInPixel: Option<f32>| {
             // perform a fast plausability test for 1:1:3:1:1 pattern
-            if view[2] < 2 as PatternType * std::cmp::max(view[0], view[4])
+            if (view[2] as i32) < 3
+                || view[2] < 2 as PatternType * std::cmp::max(view[0], view[4])
                 || view[2] < std::cmp::max(view[1], view[3])
             {
                 return false;
@@ -140,14 +141,29 @@ pub fn FindFinderPatterns(image: &BitMatrix, tryHarder: bool) -> FinderPatterns 
     res
 }
 
+// Yields (dx, dy) offsets forming the square ring at exactly the given radius.
+// Calling for r in 0..=max_r covers every cell in the square exactly once with no duplicates.
+fn spiral(radius: i32) -> impl Iterator<Item = (i32, i32)> {
+    let mut pts = Vec::new();
+    if radius == 0 {
+        pts.push((0i32, 0i32));
+    } else {
+        let r = radius;
+        for x in -r..r { pts.push((x, -r)); }
+        for y in -r..r { pts.push((r, y)); }
+        for x in (-r + 1..=r).rev() { pts.push((x, r)); }
+        for y in (-r + 1..=r).rev() { pts.push((-r, y)); }
+    }
+    pts.into_iter()
+}
+
 /**
  * @brief GenerateFinderPatternSets
  * @param patterns list of ConcentricPattern objects, i.e. found finder pattern squares
  * @return list of plausible finder pattern sets, sorted by decreasing plausibility
  */
 pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPatternSets {
-    patterns.sort_by_key(|p| p.size);
-    // std::sort(patterns.begin(), patterns.end(), [](const auto& a, const auto& b) { return a.size < b.size; });
+    patterns.sort_by(|a, b| b.size.cmp(&a.size)); // descending: larger patterns first (less likely to be noise)
 
     let mut sets: MultiMap<String, FinderPatternSet> = MultiMap::new();
     let squaredDistance = |a: ConcentricPattern, b: ConcentricPattern| {
@@ -156,35 +172,86 @@ pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPattern
         // distance from the camera is used here. This approximation only works if a < b < 2*a (see below).
         // Test image: fix-finderpattern-order.jpg
         ConcentricPattern::dot(a - b, a - b) as f64
-            * (((b).size as f64) / ((a).size as f64)).powi(2) //std::pow(double(b.size) / a.size, 2)
+            * (((b).size as f64) / ((a).size as f64)) // linear ratio (not squared) to avoid skewing cosine
     };
 
-    let cosUpper: f64 = (45.0_f64 / 180.0 * std::f64::consts::PI).cos(); // TODO: use c++20 std::numbers::pi_v
-    let cosLower: f64 = (135.0_f64 / 180.0 * std::f64::consts::PI).cos();
+    let cosUpper: f64 = (60.0_f64 / 180.0 * std::f64::consts::PI).cos();
+    let cosLower: f64 = (120.0_f64 / 180.0 * std::f64::consts::PI).cos();
 
-    let nbPatterns = (patterns).len();
+    let nb_patterns = patterns.len();
 
-    if nbPatterns < 2 {
+    if nb_patterns < 3 {
         return FinderPatternSets::default();
     }
 
-    for i in 0..(nbPatterns - 2) {
-        // for (int i = 0; i < nbPatterns - 2; i++) {
-        for j in (i + 1)..(nbPatterns - 1) {
-            // for (int j = i + 1; j < nbPatterns - 1; j++) {
-            for k in (j + 1)..nbPatterns {
-                // for (int k = j + 1; k < nbPatterns - 0; k++) {
-                let mut a = &patterns[i];
-                let mut b = &patterns[j];
-                let mut c = &patterns[k];
-                // if the pattern sizes are too different to be part of the same symbol, skip this
-                // and the rest of the innermost loop (sorted list)
-                if c.size > a.size * 2 {
-                    break;
-                }
+    // Compute bounding box of all pattern centers
+    let min_x = patterns.iter().map(|p| p.p.x).fold(f32::INFINITY, f32::min);
+    let max_x = patterns.iter().map(|p| p.p.x).fold(f32::NEG_INFINITY, f32::max);
+    let min_y = patterns.iter().map(|p| p.p.y).fold(f32::INFINITY, f32::min);
+    let max_y = patterns.iter().map(|p| p.p.y).fold(f32::NEG_INFINITY, f32::max);
 
-                // Orders the three points in an order [A,B,C] such that AB is less than AC
-                // and BC is less than AC, and the angle between BC and BA is less than 180 degrees.
+    // Bin size based on median pattern size; patterns are in descending size order
+    let median_size = patterns[nb_patterns / 2].size;
+    let bin_size = std::cmp::max(32, median_size * 3) as f32;
+
+    let bins_w = (((max_x - min_x + 1.0) / bin_size).ceil() as usize).max(1);
+    let bins_h = (((max_y - min_y + 1.0) / bin_size).ceil() as usize).max(1);
+
+    let mut bins: Vec<Vec<usize>> = vec![Vec::new(); bins_w * bins_h];
+    let bin_idx = |p: Point| -> (usize, usize) {
+        let bx = ((p.x - min_x) / bin_size) as usize;
+        let by = ((p.y - min_y) / bin_size) as usize;
+        (bx.min(bins_w - 1), by.min(bins_h - 1))
+    };
+    let bin_flat = |bx: usize, by: usize| by * bins_w + bx;
+
+    for (idx, p) in patterns.iter().enumerate() {
+        let (bx, by) = bin_idx(p.p);
+        bins[bin_flat(bx, by)].push(idx);
+    }
+
+    const MAX_MODULE_COUNT: f64 = 177.0 * 1.5;
+    const MAX_CANDIDATES: usize = 15;
+
+    for i in 0..nb_patterns.saturating_sub(2) {
+        let c0 = &patterns[i];
+        let max_dist = c0.size as f64 / 7.0 * MAX_MODULE_COUNT;
+        let (cx, cy) = bin_idx(c0.p);
+        let bin_radius = (max_dist / bin_size as f64).ceil() as i32;
+
+        let mut candidates: Vec<usize> = Vec::with_capacity(MAX_CANDIDATES * 2);
+
+        'outer: for r in 0..=bin_radius {
+            for (dx, dy) in spiral(r) {
+                let bx = cx as i32 + dx;
+                let by = cy as i32 + dy;
+                if bx < 0 || bx >= bins_w as i32 || by < 0 || by >= bins_h as i32 {
+                    continue;
+                }
+                for &idx in &bins[bin_flat(bx as usize, by as usize)] {
+                    if idx <= i {
+                        continue;
+                    }
+                    if c0.size > patterns[idx].size * 2 {
+                        continue;
+                    }
+                    candidates.push(idx);
+                    if candidates.len() >= MAX_CANDIDATES {
+                        break 'outer;
+                    }
+                }
+            }
+        }
+
+        for u in 0..candidates.len().saturating_sub(1) {
+            for v in (u + 1)..candidates.len() {
+                let j = candidates[u];
+                let k = candidates[v];
+
+                // patterns sorted descending; geometry assumes a<=b<=c in size, so remap
+                let mut a = &patterns[k]; // smallest (higher index = smaller due to desc sort)
+                let mut b = &patterns[j];
+                let mut c = &patterns[i]; // largest
 
                 let mut distAB2 = squaredDistance(*a, *b);
                 let mut distBC2 = squaredDistance(*b, *c);
@@ -198,61 +265,31 @@ pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPattern
                     std::mem::swap(&mut distAB2, &mut distAC2);
                 }
 
-                let distAB = distAB2.sqrt();
-                let distBC = (distBC2).sqrt();
-
-                // Make sure distAB and distBC don't differ more than reasonable
-                // TODO: make sure the constant 2 is not to conservative for reasonably tilted symbols
-                if distAB > 2.0 * distBC || distBC > 2.0 * distAB {
+                if distAB2 > 4.0 * distBC2 || distBC2 > 4.0 * distAB2 {
                     continue;
                 }
 
-                // Estimate the module count and ignore this set if it can not result in a valid decoding
-                let moduleCount = (distAB + distBC)
+                let distAB = distAB2.sqrt();
+                let distBC = distBC2.sqrt();
+
+                let module_count = (distAB + distBC)
                     / (2.0 * (a.size + b.size + c.size) as f64 / (3.0 * 7.0))
                     + 7.0;
-                if !(21.0 * 0.9..=177.0 * 1.5).contains(&moduleCount)
-                // moduleCount may be overestimated, see above
-                {
+                if !(21.0 * 0.9..=177.0 * 1.5).contains(&module_count) {
                     continue;
                 }
 
-                // Make sure the angle between AB and BC does not deviate from 90° by more than 45°
-                let cosAB_BC = (distAB2 + distBC2 - distAC2) / (2.0 * distAB * distBC);
-                if (cosAB_BC.is_nan()) || cosAB_BC > cosUpper || cosAB_BC < cosLower {
+                let cos_ab_bc = (distAB2 + distBC2 - distAC2) / (2.0 * distAB * distBC);
+                if cos_ab_bc.is_nan() || cos_ab_bc > cosUpper || cos_ab_bc < cosLower {
                     continue;
                 }
 
-                // a^2 + b^2 = c^2 (Pythagorean theorem), and a = b (isosceles triangle).
-                // Since any right triangle satisfies the formula c^2 - b^2 - a^2 = 0,
-                // we need to check both two equal sides separately.
-                // The value of |c^2 - 2 * b^2| + |c^2 - 2 * a^2| increases as dissimilarity
-                // from isosceles right triangle.
-                let d: f64 = (distAC2 - 2.0 * distAB2).abs() + (distAC2 - 2.0 * distBC2).abs();
-
-                // Use cross product to figure out whether A and C are correct or flipped.
-                // This asks whether BC x BA has a positive z component, which is the arrangement
-                // we want for A, B, C. If it's negative then swap A and C.
                 if ConcentricPattern::cross(*c - *b, *a - *b) < 0.0 {
                     std::mem::swap(&mut a, &mut c);
                 }
 
-                // arbitrarily limit the number of potential sets
-                // (this has performance implications while limiting the maximal number of detected symbols)
-                sets.insert(
-                    d.to_string(),
-                    FinderPatternSet {
-                        bl: *a,
-                        tl: *b,
-                        tr: *c,
-                    },
-                );
-                // const setSizeLimit : usize = 256;
-                // if (sets.len() < setSizeLimit || sets.crbegin().first > d) {
-                // 	sets.emplace(d, FinderPatternSet{a, b, c});
-                // 	if (sets.len() > setSizeLimit)
-                // 		{sets.erase(std::prev(sets.end()));}
-                // }
+                let score = distAB + distBC + (distAB - distBC).abs();
+                sets.insert(score.to_string(), FinderPatternSet { bl: *a, tl: *b, tr: *c });
             }
         }
     }
@@ -356,7 +393,7 @@ pub fn TraceLine(image: &BitMatrix, p: Point, d: Point, edge: i32) -> impl Regre
     let mut curI = EdgeTracer::new(image, cur.p, Point::mainDirection(cur.d()));
     // make sure curI positioned such that the white->black edge is directly behind
     // Test image: fix-traceline.jpg
-    while !bool::from(curI.edgeAtBack()) {
+    while curI.isInSelf() && !bool::from(curI.edgeAtBack()) {
         if curI.edgeAtLeft().into() {
             curI.turnRight();
         } else if curI.edgeAtRight().into() {
@@ -439,13 +476,11 @@ pub fn LocateAlignmentPattern(
         // #else
         // 				   {0, -2}, {0, 2}, {-2, 0}, {2, 0}, {-1, -2}, {1, -2}, {-1, 2}, {1, 2}, {-2, -1}, {-2, 1}, {2, -1}, {2, 1}}) {
         // #endif
-        let cor = CenterOfRing(
-            image,
-            (estimate + moduleSize as f32 * 2.25 * d).floor(),
-            moduleSize * 3,
-            1,
-            false,
-        );
+        let p = (estimate + moduleSize as f32 * 2.25 * d).floor();
+        if !image.is_in(p) {
+            continue;
+        }
+        let cor = CenterOfRing(image, p, moduleSize * 3, 1, false);
 
         // if we did not land on a black pixel the concentric pattern finder will fail
         if cor.is_none() || !image.get_point(cor.unwrap()) {
@@ -504,6 +539,9 @@ pub fn SampleQR(image: &BitMatrix, fp: &FinderPatternSet) -> Result<QRCodeDetect
     if top.dim == 0 && left.dim == 0 {
         return Err(Exceptions::NOT_FOUND);
     }
+
+    let top_dim = top.dim;
+    let left_dim = left.dim;
 
     let best = match top.err.cmp(&left.err) {
         std::cmp::Ordering::Less => top,
@@ -572,7 +610,9 @@ pub fn SampleQR(image: &BitMatrix, fp: &FinderPatternSet) -> Result<QRCodeDetect
     }
 
     // otherwise the simple estimation used by upstream is used as a best guess fallback
-    if !image.is_in(br.p) {
+    if !image.is_in(br.p)
+        || FitSquareToPoints(image, fp.bl.p, fp.bl.size, 2, false).is_none()
+    {
         br = fp.tr - fp.tl + fp.bl;
         brOffset = point_i(0, 0);
     }
@@ -589,7 +629,10 @@ pub fn SampleQR(image: &BitMatrix, fp: &FinderPatternSet) -> Result<QRCodeDetect
 
         // if the version bits are garbage -> discard the detection
         if version.is_err()
-            || (version.as_ref().unwrap().getDimensionForVersion() as i32 - dimension).abs() > 8
+            || std::cmp::min(
+                (version.as_ref().unwrap().getDimensionForVersion() as i32 - top_dim).abs(),
+                (version.as_ref().unwrap().getDimensionForVersion() as i32 - left_dim).abs(),
+            ) > 8
         {
             /*return DetectorResult();*/
             return Err(Exceptions::NOT_FOUND);
@@ -1152,8 +1195,7 @@ pub fn SampleMQR(image: &BitMatrix, fp: ConcentricPattern) -> Result<QRCodeDetec
         // for (int i = 0; i < dim; ++i) {
         let px = bestPT.transform_point(Point::centered(point_i(i, dim)));
         let py = bestPT.transform_point(Point::centered(point_i(dim, i)));
-        blackPixels += u32::from(cur.blackAt(px) && cur.blackAt(px))
-            + u32::from(image.is_in(py) && image.get_point(py));
+        blackPixels += u32::from(cur.blackAt(px)) + u32::from(cur.blackAt(py));
     }
     if blackPixels > 2 * dim / 3 {
         return Err(Exceptions::NOT_FOUND);
