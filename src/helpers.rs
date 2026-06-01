@@ -280,6 +280,11 @@ pub fn detect_in_luma_with_hints(
     barcode_type: Option<BarcodeFormat>,
     hints: &mut DecodeHints,
 ) -> Result<RXingResult> {
+    if width == 0 || height == 0 {
+        return Err(Exceptions::illegal_argument_with(
+            "Both dimensions must be greater than 0",
+        ));
+    }
     let mut multi_format_reader = MultiFormatReader::default();
 
     if let Some(bc_type) = barcode_type {
@@ -320,6 +325,11 @@ pub fn detect_in_luma_filtered_with_hints(
     barcode_type: Option<BarcodeFormat>,
     hints: &mut DecodeHints,
 ) -> Result<RXingResult> {
+    if width == 0 || height == 0 {
+        return Err(Exceptions::illegal_argument_with(
+            "Both dimensions must be greater than 0",
+        ));
+    }
     let mut multi_format_reader = FilteredImageReader::new(MultiFormatReader::default());
 
     if let Some(bc_type) = barcode_type {
@@ -348,6 +358,11 @@ pub fn detect_multiple_in_luma_with_hints(
     height: u32,
     hints: &mut DecodeHints,
 ) -> Result<Vec<RXingResult>> {
+    if width == 0 || height == 0 {
+        return Err(Exceptions::illegal_argument_with(
+            "Both dimensions must be greater than 0",
+        ));
+    }
     let multi_format_reader = MultiUseMultiFormatReader::default();
     let mut scanner = GenericMultipleBarcodeReader::new(multi_format_reader);
 
