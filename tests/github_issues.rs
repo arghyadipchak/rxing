@@ -762,3 +762,17 @@ fn issue_83_subtract_with_overflow() {
         .unwrap();
     rxing::helpers::detect_multiple_in_luma_with_hints(data, 75, 80, &mut hints).unwrap_or_default();
 }
+
+#[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
+#[test]
+fn test_zero_size_image_issue_86() {
+    use rxing::DecodeHints;
+
+    let mut hints: DecodeHints =
+        DecodeHints::default().with(rxing::DecodeHintValue::TryHarder(true));
+
+    let data = Vec::new();
+    let res = rxing::helpers::detect_multiple_in_luma_with_hints(data, 0, 0, &mut hints);
+    assert!(res.is_err());
+}
+
