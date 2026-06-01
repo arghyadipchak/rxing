@@ -107,7 +107,13 @@ impl<B: Binarizer> BinaryBitmap<B> {
             .get_or_init(|| match self.binarizer.get_black_matrix() {
                 Ok(a) => a.clone(),
                 Err(_) => {
-                    BitMatrix::new(self.get_width() as u32, self.get_height() as u32).unwrap()
+                    let w = self.get_width() as u32;
+                    let h = self.get_height() as u32;
+                    if w == 0 || h == 0 {
+                        BitMatrix::new(1, 1).unwrap()
+                    } else {
+                        BitMatrix::new(w, h).unwrap()
+                    }
                 }
             });
         self.matrix.get_mut().unwrap()
@@ -144,7 +150,13 @@ impl<B: Binarizer> BinaryBitmap<B> {
             .get_or_init(|| match self.binarizer.get_black_matrix() {
                 Ok(a) => a.clone(),
                 Err(_) => {
-                    BitMatrix::new(self.get_width() as u32, self.get_height() as u32).unwrap()
+                    let w = self.get_width() as u32;
+                    let h = self.get_height() as u32;
+                    if w == 0 || h == 0 {
+                        BitMatrix::new(1, 1).unwrap()
+                    } else {
+                        BitMatrix::new(w, h).unwrap()
+                    }
                 }
             })
     }
