@@ -38,6 +38,7 @@ pub struct FinderPatternFinder<'a> {
     hasSkipped: bool,
     // crossCheckStateCount: [u32; 5],
     resultPointCallback: Option<PointCallback>,
+    pub min_module_size: f64,
 }
 impl<'a> FinderPatternFinder<'_> {
     pub const CENTER_QUORUM: usize = 2;
@@ -63,6 +64,7 @@ impl<'a> FinderPatternFinder<'_> {
             hasSkipped: false,
             // crossCheckStateCount: [0u32; 5],
             resultPointCallback,
+            min_module_size: 0.0,
         }
     }
 
@@ -76,6 +78,8 @@ impl<'a> FinderPatternFinder<'_> {
 
     pub fn find(&mut self, hints: &DecodeHints) -> Result<FinderPatternInfo> {
         let tryHarder = matches!(hints.TryHarder, Some(true));
+        self.min_module_size = hints.MinimumModuleSize.unwrap_or(0) as f64;
+        let min_skip = if self.min_module_size > 1.0 { (3.0 * self.min_module_size) as u32 } else { Self::MIN_SKIP };
         let maxI = self.image.getHeight();
         let maxJ = self.image.getWidth();
         // We are looking for black/white/black/white/black modules in
@@ -86,8 +90,10 @@ impl<'a> FinderPatternFinder<'_> {
         // number of pixels the center could be, so skip this often. When trying harder, look for all
         // QR versions regardless of how dense they are.
         let mut iSkip = (3 * maxI) / (4 * Self::MAX_MODULES);
-        if iSkip < Self::MIN_SKIP || tryHarder {
+        if tryHarder {
             iSkip = Self::MIN_SKIP;
+        } else if iSkip < min_skip {
+            iSkip = min_skip;
         }
 
         let mut done = false;
@@ -112,7 +118,7 @@ impl<'a> FinderPatternFinder<'_> {
                         // Counting black pixels
                         if currentState == 4 {
                             // A winner?
-                            if FinderPatternFinder::foundPatternCross(&stateCount) {
+                            if Self::foundPatternCross(&stateCount, self.min_module_size) {
                                 // Yes
                                 let confirmed = self.handlePossibleCenter(&stateCount, i as u32, j);
                                 if confirmed {
@@ -164,7 +170,7 @@ impl<'a> FinderPatternFinder<'_> {
                 }
                 j += 1;
             }
-            if FinderPatternFinder::foundPatternCross(&stateCount) {
+            if Self::foundPatternCross(&stateCount, self.min_module_size) {
                 let confirmed = self.handlePossibleCenter(&stateCount, i as u32, maxJ);
                 if confirmed {
                     iSkip = stateCount[0];
@@ -197,7 +203,7 @@ impl<'a> FinderPatternFinder<'_> {
      * @return true iff the proportions of the counts is close enough to the 1/1/3/1/1 ratios
      *         used by finder patterns to be considered a match
      */
-    pub fn foundPatternCross(stateCount: &[u32]) -> bool {
+    pub fn foundPatternCross(stateCount: &[u32], min_module_size: f64) -> bool {
         let mut totalModuleSize = 0;
         for count in stateCount.iter().take(5) {
             if *count == 0 {
@@ -209,8 +215,13 @@ impl<'a> FinderPatternFinder<'_> {
             return false;
         }
         let moduleSize = totalModuleSize as f64 / 7.0;
-        let maxVariance = moduleSize / 2.0;
-        // Allow less than 50% variance from 1-1-3-1-1 proportions
+        if moduleSize < min_module_size {
+            return false;
+        }
+        // Quantization-aware tolerance: base 50% relative floor plus an absolute term
+        // (0.5px / moduleSize) that accounts for sub-pixel boundary registration error.
+        // Decays to ~0 for large modules (no impact), provides needed headroom for m≈1px.
+        let maxVariance = moduleSize / 2.0 + (0.5_f64 / moduleSize).min(0.5_f64);
         ((moduleSize - stateCount[0] as f64).abs()) < maxVariance
             && ((moduleSize - stateCount[1] as f64).abs()) < maxVariance
             && ((3.0 * moduleSize - stateCount[2] as f64).abs()) < 3.0 * maxVariance
@@ -223,7 +234,7 @@ impl<'a> FinderPatternFinder<'_> {
      * @return true iff the proportions of the counts is close enough to the 1/1/3/1/1 ratios
      *         used by finder patterns to be considered a match
      */
-    pub fn foundPatternDiagonal(stateCount: &[u32]) -> bool {
+    pub fn foundPatternDiagonal(stateCount: &[u32], min_module_size: f64) -> bool {
         let mut totalModuleSize = 0;
         for count in stateCount.iter().take(5) {
             if *count == 0 {
@@ -235,8 +246,11 @@ impl<'a> FinderPatternFinder<'_> {
             return false;
         }
         let moduleSize = totalModuleSize as f64 / 7.0;
-        let maxVariance = moduleSize / 1.333;
-        // Allow less than 75% variance from 1-1-3-1-1 proportions
+        if moduleSize < min_module_size {
+            return false;
+        }
+        // Same quantization-aware formula as foundPatternCross; base is 75% for diagonal scans.
+        let maxVariance = moduleSize / 1.333 + (0.5_f64 / moduleSize).min(0.5_f64);
         (moduleSize - stateCount[0] as f64).abs() < maxVariance
             && (moduleSize - stateCount[1] as f64).abs() < maxVariance
             && (3.0 * moduleSize - stateCount[2] as f64).abs() < 3.0 * maxVariance
@@ -333,7 +347,7 @@ impl<'a> FinderPatternFinder<'_> {
             return false;
         }
 
-        Self::foundPatternDiagonal(&crossCheckStateCount)
+        Self::foundPatternDiagonal(&crossCheckStateCount, self.min_module_size)
     }
 
     /**
@@ -416,7 +430,7 @@ impl<'a> FinderPatternFinder<'_> {
             return f32::NAN;
         }
 
-        if Self::foundPatternCross(&crossCheckStateCount) {
+        if Self::foundPatternCross(&crossCheckStateCount, self.min_module_size) {
             Self::centerFromEnd(&crossCheckStateCount, i as u32)
         } else {
             f32::NAN
@@ -504,7 +518,7 @@ impl<'a> FinderPatternFinder<'_> {
             return f32::NAN;
         }
 
-        if Self::foundPatternCross(&crossCheckStateCount) {
+        if Self::foundPatternCross(&crossCheckStateCount, self.min_module_size) {
             Self::centerFromEnd(&crossCheckStateCount, j as u32)
         } else {
             f32::NAN
@@ -740,7 +754,10 @@ impl<'a> FinderPatternFinder<'_> {
                     // we need to check both two equal sides separately.
                     // The value of |c^2 - 2 * b^2| + |c^2 - 2 * a^2| increases as dissimilarity
                     // from isosceles right triangle.
-                    let d = (c - 2.0 * b).abs() + (c - 2.0 * a).abs();
+                    if c == 0.0 {
+                        continue;
+                    }
+                    let d = ((c - 2.0 * b).abs() + (c - 2.0 * a).abs()) / c;
                     if d < distortion {
                         distortion = d;
                         bestPatterns = [Some(*fpi), Some(*fpj), Some(*fpk)];

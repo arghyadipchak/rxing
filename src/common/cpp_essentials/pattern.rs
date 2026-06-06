@@ -495,14 +495,11 @@ pub fn IsPattern<const E2E: bool, const LEN: usize, const SUM: usize, const SPAR
     space_in_pixel: Option<f32>,
     min_quiet_zone: f32,
     module_size_ref: f32,
-    // e2e: Option<bool>,
+    min_module_size: f32,
 ) -> f32 {
-    //let e2e = E2E; //e2e.unwrap_or(false);
     let mut module_size_ref = module_size_ref;
 
     if E2E {
-        //using float_t = double;
-        // let v_src: [PatternType; LEN] = view.into();
         let widths = BarAndSpaceSum::<LEN, PatternType, f64>(view.into());
         let sums = pattern.sums();
         let modSize: BarAndSpace<f64> = BarAndSpace {
@@ -515,7 +512,6 @@ pub fn IsPattern<const E2E: bool, const LEN: usize, const SUM: usize, const SPAR
             f64::max(modSize[0], modSize[1]),
         ];
         if M > 4.0 * m {
-            // make sure module sizes of bars and spaces are not too far away from each other
             return 0.0;
         }
 
@@ -531,13 +527,15 @@ pub fn IsPattern<const E2E: bool, const LEN: usize, const SUM: usize, const SPAR
         };
 
         for x in 0..LEN {
-            // for (int x = 0; x < LEN; ++x){
             if (view[x] as f64 - pattern[x] as f64 * modSize[x]).abs() > thr[x] {
                 return 0.0;
             }
         }
 
         let moduleSize: f64 = (modSize[0] + modSize[1]) / 2.0;
+        if moduleSize < min_module_size as f64 {
+            return 0.0;
+        }
         return moduleSize as f32;
     }
 
@@ -547,6 +545,9 @@ pub fn IsPattern<const E2E: bool, const LEN: usize, const SUM: usize, const SPAR
     }
 
     let module_size: f32 = (Into::<f32>::into(width)) / (SUM as f32);
+    if module_size < min_module_size {
+        return 0.0;
+    }
 
     if min_quiet_zone != 0.0
         && (space_in_pixel.unwrap_or(f32::MAX)) < min_quiet_zone * module_size - 1.0
@@ -559,9 +560,6 @@ pub fn IsPattern<const E2E: bool, const LEN: usize, const SUM: usize, const SPAR
     }
 
     let threshold = module_size_ref * (0.5 + (E2E as u8) as f32 * 0.25) + 0.5;
-
-    // the offset of 0.5 is to make the code less sensitive to quantization errors for small (near 1) module sizes.
-    // TODO: review once we have upsampling in the binarizer in place.
 
     for x in 0..LEN {
         if (Into::<f32>::into(view[x]) - Into::<f32>::into(pattern[x]) * module_size_ref).abs()
@@ -594,7 +592,7 @@ pub fn IsRightGuard<const N: usize, const SUM: usize, const IS_SPARCE: bool>(
         spaceInPixel,
         minQuietZone,
         moduleSizeRef,
-        // None,
+        0.0,
     ) != 0.0
 }
 
@@ -641,7 +639,7 @@ pub fn FindLeftGuard<'a, const LEN: usize, const SUM: usize, const IS_SPARCE: bo
         {
             return false;
         }
-        IsPattern::<false, LEN, SUM, IS_SPARCE>(window, pattern, spaceInPixel, minQuietZone, 0.0)
+        IsPattern::<false, LEN, SUM, IS_SPARCE>(window, pattern, spaceInPixel, minQuietZone, 0.0, 0.0)
             != 0.0
     })
 }

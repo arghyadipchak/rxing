@@ -181,6 +181,56 @@ pub fn detect_in_image_with_hints(
     )
 }
 
+#[cfg(all(feature = "image", feature = "decoders"))]
+pub fn detect_in_file_filtered(
+    file_name: &str,
+    barcode_type: Option<BarcodeFormat>,
+) -> Result<RXingResult> {
+    detect_in_file_filtered_with_hints(file_name, barcode_type, &mut DecodeHints::default())
+}
+
+#[cfg(all(feature = "image", feature = "decoders"))]
+pub fn detect_in_file_filtered_with_hints(
+    file_name: &str,
+    barcode_type: Option<BarcodeFormat>,
+    hints: &mut DecodeHints,
+) -> Result<RXingResult> {
+    let Ok(img) = image::open(file_name) else {
+        return Err(Exceptions::illegal_argument_with(format!(
+            "file '{file_name}' not found or cannot be opened"
+        )));
+    };
+    detect_in_image_filtered_with_hints(img, barcode_type, hints)
+}
+
+#[cfg(all(feature = "image", feature = "decoders"))]
+pub fn detect_in_image_filtered(
+    img: DynamicImage,
+    barcode_type: Option<BarcodeFormat>,
+) -> Result<RXingResult> {
+    detect_in_image_filtered_with_hints(img, barcode_type, &mut DecodeHints::default())
+}
+
+#[cfg(all(feature = "image", feature = "decoders"))]
+pub fn detect_in_image_filtered_with_hints(
+    img: DynamicImage,
+    barcode_type: Option<BarcodeFormat>,
+    hints: &mut DecodeHints,
+) -> Result<RXingResult> {
+    let mut multi_format_reader = FilteredImageReader::new(MultiFormatReader::default());
+
+    if let Some(bc_type) = barcode_type {
+        hints.PossibleFormats = Some(HashSet::from([bc_type]));
+    }
+
+    hints.TryHarder = hints.TryHarder.or(Some(true));
+
+    multi_format_reader.decode_with_hints(
+        &mut BinaryBitmap::new(HybridBinarizer::new(BufferedImageLuminanceSource::new(img))),
+        hints,
+    )
+}
+
 #[cfg(all(
     feature = "image",
     feature = "multi_barcode_readers",

@@ -52,7 +52,7 @@ const SUM: usize = 7;
 const PATTERN: FixedPattern<LEN, SUM, false> = FixedPattern::new([1, 1, 3, 1, 1]);
 const E2E: bool = true;
 
-fn FindPattern(view: PatternView<'_>) -> Result<PatternView<'_>> {
+fn FindPattern(view: PatternView<'_>, min_module_size: f32) -> Result<PatternView<'_>> {
     FindLeftGuardBy::<LEN, _>(
         view,
         LEN,
@@ -64,15 +64,15 @@ fn FindPattern(view: PatternView<'_>) -> Result<PatternView<'_>> {
             {
                 return false;
             }
-            IsPattern::<E2E, 5, 7, false>(view, &PATTERN, spaceInPixel, 0.1, 0.0) != 0.0
+            IsPattern::<E2E, 5, 7, false>(view, &PATTERN, spaceInPixel, 0.1, 0.0, min_module_size) != 0.0
         },
     )
 }
 
 /// Locate the finder patterns for the symbol.
 /// This function can panic
-pub fn FindFinderPatterns(image: &BitMatrix, tryHarder: bool) -> FinderPatterns {
-    const MIN_SKIP: u32 = 3; // 1 pixel/module times 3 modules/center
+pub fn FindFinderPatterns(image: &BitMatrix, tryHarder: bool, min_module_size: u32) -> FinderPatterns {
+    let min_skip = if min_module_size > 1 { 3 * min_module_size } else { 3 }; // 1 pixel/module times 3 modules/center
     const MAX_MODULES_FAST: u32 = 20 * 4 + 17; // support up to version 20 for mobile clients
 
     // Let's assume that the maximum version QR Code we support takes up 1/4 the height of the
@@ -81,8 +81,10 @@ pub fn FindFinderPatterns(image: &BitMatrix, tryHarder: bool) -> FinderPatterns 
     // QR versions regardless of how dense they are.
     let height = image.height();
     let mut skip = (3 * height) / (4 * MAX_MODULES_FAST);
-    if skip < MIN_SKIP || tryHarder {
-        skip = MIN_SKIP;
+    if tryHarder {
+        skip = 3;
+    } else if skip < min_skip {
+        skip = min_skip;
     }
 
     let mut res: Vec<ConcentricPattern> = Vec::new();
@@ -95,7 +97,7 @@ pub fn FindFinderPatterns(image: &BitMatrix, tryHarder: bool) -> FinderPatterns 
         let mut next: PatternView = PatternView::new(&row);
 
         while {
-            if let Ok(up_next) = FindPattern(next) {
+            if let Ok(up_next) = FindPattern(next, min_module_size as f32) {
                 next = up_next;
                 next.isValid()
             } else {
@@ -326,6 +328,7 @@ pub fn EstimateModuleSize(image: &BitMatrix, a: ConcentricPattern, b: Concentric
         &PatternView::new(&PatternRow::new(pattern.to_vec())),
         &PATTERN,
         None,
+        0.0,
         0.0,
         0.0,
     ) != 0.0)
@@ -882,7 +885,7 @@ pub fn DetectPureQR(image: &BitMatrix) -> Result<QRCodeDetectorResult> {
 
         let diag_hld = diagonal.to_vec().into();
         let view = PatternView::new(&diag_hld);
-        if !(IsPattern::<E2E, 5, 7, false>(&view, &PATTERN, None, 0.0, 0.0) != 0.0) {
+        if !(IsPattern::<E2E, 5, 7, false>(&view, &PATTERN, None, 0.0, 0.0, 0.0) != 0.0) {
             return Err(Exceptions::NOT_FOUND);
         }
     }
@@ -960,7 +963,7 @@ pub fn DetectPureMQR(image: &BitMatrix) -> Result<QRCodeDetectorResult> {
         .ok_or(Exceptions::ILLEGAL_STATE)?;
     let diag_hld = diagonal.to_vec().into();
     let view = PatternView::new(&diag_hld);
-    if !(IsPattern::<E2E, 5, 7, false>(&view, &PATTERN, None, 0.0, 0.0) != 0.0) {
+    if !(IsPattern::<E2E, 5, 7, false>(&view, &PATTERN, None, 0.0, 0.0, 0.0) != 0.0) {
         return Err(Exceptions::NOT_FOUND);
     }
 
@@ -1041,7 +1044,7 @@ pub fn DetectPureRMQR(image: &BitMatrix) -> Result<QRCodeDetectorResult> {
         .ok_or(Exceptions::ILLEGAL_STATE)?;
     let diag_hld = diagonal.to_vec().into();
     let view = PatternView::new(&diag_hld);
-    if IsPattern::<E2E, 5, 7, false>(&view, &PATTERN, None, 0.0, 0.0) == 0.0 {
+    if IsPattern::<E2E, 5, 7, false>(&view, &PATTERN, None, 0.0, 0.0, 0.0) == 0.0 {
         return Err(Exceptions::NOT_FOUND);
     }
 
@@ -1051,7 +1054,7 @@ pub fn DetectPureRMQR(image: &BitMatrix) -> Result<QRCodeDetectorResult> {
         .ok_or(Exceptions::ILLEGAL_STATE)?;
     let subdiagonal_hld = subdiagonal.to_vec().into();
     let view = PatternView::new(&subdiagonal_hld);
-    if IsPattern::<false, 4, 4, false>(&view, &SUBPATTERN, None, 0.0, 0.0) == 0.0 {
+    if IsPattern::<false, 4, 4, false>(&view, &SUBPATTERN, None, 0.0, 0.0, 0.0) == 0.0 {
         return Err(Exceptions::NOT_FOUND);
     }
 
@@ -1072,7 +1075,7 @@ pub fn DetectPureRMQR(image: &BitMatrix) -> Result<QRCodeDetectorResult> {
         let timing: TimingPattern = cur.readPattern(None).ok_or(Exceptions::ILLEGAL_STATE)?;
         let timing_hld = timing.to_vec().into();
         let view = PatternView::new(&timing_hld);
-        if IsPattern::<E2E, 10, 10, false>(&view, &TIMINGPATTERN, None, 0.0, 0.0) == 0.0 {
+        if IsPattern::<E2E, 10, 10, false>(&view, &TIMINGPATTERN, None, 0.0, 0.0, 0.0) == 0.0 {
             return Err(Exceptions::NOT_FOUND);
         }
         moduleSize += timing.iter().sum::<u16>() as f32;

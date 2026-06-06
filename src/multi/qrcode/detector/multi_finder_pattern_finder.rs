@@ -219,6 +219,9 @@ impl<'a> MultiFinderPatternFinder<'_> {
 
     pub fn findMulti(&mut self, hints: &DecodeHints) -> Result<Vec<FinderPatternInfo>> {
         let tryHarder = hints.TryHarder.unwrap_or(false);
+        let min_module_size = hints.MinimumModuleSize.unwrap_or(0) as f64;
+        self.0.min_module_size = min_module_size;
+        let min_skip = if min_module_size > 1.0 { (3.0 * min_module_size) as u32 } else { FinderPatternFinder::MIN_SKIP };
         let image = self.0.getImage().clone();
         let maxI = image.getHeight();
         let maxJ = image.getWidth();
@@ -230,8 +233,10 @@ impl<'a> MultiFinderPatternFinder<'_> {
         // number of pixels the center could be, so skip this often. When trying harder, look for all
         // QR versions regardless of how dense they are.
         let mut iSkip = (3 * maxI) / (4 * FinderPatternFinder::MAX_MODULES);
-        if iSkip < FinderPatternFinder::MIN_SKIP || tryHarder {
+        if tryHarder {
             iSkip = FinderPatternFinder::MIN_SKIP;
+        } else if iSkip < min_skip {
+            iSkip = min_skip;
         }
 
         let mut stateCount = [0_u32; 5]; //new int[5];
@@ -256,7 +261,7 @@ impl<'a> MultiFinderPatternFinder<'_> {
                         // Counting black pixels
                         if currentState == 4 {
                             // A winner?
-                            if FinderPatternFinder::foundPatternCross(&stateCount)
+                            if FinderPatternFinder::foundPatternCross(&stateCount, min_module_size)
                                 && self.0.handlePossibleCenter(&stateCount, i, j)
                             {
                                 // Yes
@@ -279,7 +284,7 @@ impl<'a> MultiFinderPatternFinder<'_> {
                 }
             } // for j=...
 
-            if FinderPatternFinder::foundPatternCross(&stateCount) {
+            if FinderPatternFinder::foundPatternCross(&stateCount, min_module_size) {
                 self.0.handlePossibleCenter(&stateCount, i, maxJ);
             }
 

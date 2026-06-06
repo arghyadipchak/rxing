@@ -98,6 +98,7 @@ impl<T: MultipleBarcodeReader + Reader> MultiImageSpanAbstractBlackBoxTestCase<T
             DecodeHintValue::AllowedEanExtensions(v) => self.hints.AllowedEanExtensions = Some(v),
             DecodeHintValue::AlsoInverted(v) => self.hints.AlsoInverted = Some(v),
             DecodeHintValue::TelepenAsNumeric(v) => self.hints.TelepenAsNumeric = Some(v),
+            DecodeHintValue::MinimumModuleSize(v) => self.hints.MinimumModuleSize = Some(v),
             #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
             DecodeHintValue::QrAssumeSpecConformInput(v) => {
                 self.hints.QrAssumeSpecConformInput = Some(v)

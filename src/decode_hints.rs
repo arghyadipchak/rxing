@@ -126,6 +126,12 @@ pub enum DecodeHintType {
      * Will translate the ASCII values parsed by the Telepen reader into the Telepen Numeric form.
      */
     TELEPEN_AS_NUMERIC,
+
+    /**
+     * The minimum size (in pixels) for valid pattern modules.
+     * Currently applied to QR code detectors only; has no effect on 1D barcode readers.
+     */
+    MINIMUM_MODULE_SIZE,
     /*
      * Data type the hint is expecting.
      * Among the possible values the {@link Void} stands out as being used for
@@ -241,6 +247,12 @@ pub enum DecodeHintValue {
      * Translate the ASCII values parsed by the Telepen reader into the Telepen Numeric form; use {@link Boolean#TRUE}.
      */
     TelepenAsNumeric(bool),
+
+    /**
+     * The minimum size (in pixels) for valid pattern modules.
+     * Currently applied to QR code detectors only; has no effect on 1D barcode readers.
+     */
+    MinimumModuleSize(u32),
 }
 
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
@@ -338,6 +350,12 @@ pub struct DecodeHints {
      * Translate the ASCII values parsed by the Telepen reader into the Telepen Numeric form; use {@link Boolean#TRUE}.
      */
     pub TelepenAsNumeric: Option<bool>,
+
+    /**
+     * The minimum size (in pixels) for valid pattern modules.
+     * Currently applied to QR code detectors only; has no effect on 1D barcode readers.
+     */
+    pub MinimumModuleSize: Option<u32>,
 }
 
 impl From<super::DecodingHintDictionary> for DecodeHints {
@@ -364,6 +382,7 @@ impl From<super::DecodingHintDictionary> for DecodeHints {
                 DecodeHintValue::AllowedEanExtensions(v) => new_self.AllowedEanExtensions = Some(v),
                 DecodeHintValue::AlsoInverted(v) => new_self.AlsoInverted = Some(v),
                 DecodeHintValue::TelepenAsNumeric(v) => new_self.TelepenAsNumeric = Some(v),
+                DecodeHintValue::MinimumModuleSize(v) => new_self.MinimumModuleSize = Some(v),
                 #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
                 DecodeHintValue::QrAssumeSpecConformInput(v) => {
                     new_self.QrAssumeSpecConformInput = Some(v)
@@ -460,6 +479,13 @@ impl From<DecodeHints> for super::DecodingHintDictionary {
             );
         }
 
+        if let Some(v) = value.MinimumModuleSize {
+            new_self.insert(
+                DecodeHintType::MINIMUM_MODULE_SIZE,
+                DecodeHintValue::MinimumModuleSize(v),
+            );
+        }
+
         #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
         if let Some(v) = value.QrAssumeSpecConformInput {
             new_self.insert(
@@ -488,6 +514,7 @@ impl DecodeHints {
             DecodeHintValue::AllowedEanExtensions(v) => self.AllowedEanExtensions = Some(v),
             DecodeHintValue::AlsoInverted(v) => self.AlsoInverted = Some(v),
             DecodeHintValue::TelepenAsNumeric(v) => self.TelepenAsNumeric = Some(v),
+            DecodeHintValue::MinimumModuleSize(v) => self.MinimumModuleSize = Some(v),
             #[cfg(feature = "allow_forced_iso_ied_18004_compliance")]
             DecodeHintValue::QrAssumeSpecConformInput(v) => self.QrAssumeSpecConformInput = Some(v),
         }

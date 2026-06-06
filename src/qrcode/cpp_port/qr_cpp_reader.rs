@@ -197,8 +197,9 @@ impl QrReader {
         // 	LogMatrixWriter lmw(log, *binImg, 5, "qr-log.pnm");
         // #endif
         let try_harder = hints.TryHarder.unwrap_or(false);
+        let min_module_size = hints.MinimumModuleSize.unwrap_or(0);
 
-        let mut allFPs = FindFinderPatterns(binImg, try_harder);
+        let mut allFPs = FindFinderPatterns(binImg, try_harder, min_module_size);
 
         // #ifdef PRINT_DEBUG
         // 	printf("allFPs: %d\n", Size(allFPs));

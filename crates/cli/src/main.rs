@@ -33,6 +33,10 @@ enum Commands {
         #[arg(short, long)]
         decode_multi: bool,
 
+        /// Use FilteredImageReader to try upscaling/pyramid steps (good for small modules)
+        #[arg(short, long)]
+        filtered: bool,
+
         /// Can be specified multiple times with different barcode formats, only listed formats are searched for.
         #[arg(short, long, value_enum)]
         barcode_types: Option<Vec<BarcodeFormat>>,
@@ -242,6 +246,7 @@ fn main() -> ExitCode {
         Commands::Decode {
             try_harder,
             decode_multi,
+            filtered,
             barcode_types,
             other,
             pure_barcode,
@@ -260,6 +265,7 @@ fn main() -> ExitCode {
             &cli.file_name,
             try_harder,
             decode_multi,
+            filtered,
             barcode_types,
             other,
             pure_barcode,
@@ -327,6 +333,7 @@ fn decode_command(
     file_name: &str,
     try_harder: &bool,
     decode_multi: &bool,
+    filtered: &bool,
     barcode_types: &Option<Vec<BarcodeFormat>>,
     other: &Option<String>,
     pure_barcode: &Option<bool>,
@@ -404,10 +411,10 @@ fn decode_command(
     //     file_name, try_harder, decode_multi, barcode_types
     // );
 
-    if !try_harder {
+    if *try_harder {
         hints.insert(
             rxing::DecodeHintType::TRY_HARDER,
-            rxing::DecodeHintValue::TryHarder(false),
+            rxing::DecodeHintValue::TryHarder(true),
         );
     }
     if let Some(barcode_type) = barcode_types {
@@ -425,6 +432,11 @@ fn decode_command(
     } else {
         String::default()
     };
+
+    if *decode_multi && *filtered {
+        eprintln!("error: --filtered is not supported with --decode-multi");
+        return ExitCode::FAILURE;
+    }
 
     if *decode_multi {
         let results = if extension == "svg" {
@@ -477,6 +489,8 @@ fn decode_command(
     } else {
         let result = if extension == "svg" {
             rxing::helpers::detect_in_svg_with_hints(file_name, None, &mut hints.into())
+        } else if *filtered {
+            rxing::helpers::detect_in_file_filtered_with_hints(file_name, None, &mut hints.into())
         } else {
             rxing::helpers::detect_in_file_with_hints(file_name, None, &mut hints.into())
         };

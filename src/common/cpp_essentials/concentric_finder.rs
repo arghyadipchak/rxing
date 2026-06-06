@@ -136,6 +136,7 @@ pub fn CheckSymmetricPattern<
         None,
         0.0,
         0.0,
+        0.0,
     ) == 0.0
     {
         return 0;

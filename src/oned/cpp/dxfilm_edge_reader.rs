@@ -65,6 +65,7 @@ fn IsPattern<const N: usize, const SUM: usize>(
             }),
             minQuietZone,
             0.0,
+            0.0,
         ) != 0.0
 }
 
