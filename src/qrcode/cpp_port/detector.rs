@@ -182,7 +182,7 @@ fn spiral(radius: i32) -> impl Iterator<Item = (i32, i32)> {
  * @return list of plausible finder pattern sets, sorted by decreasing plausibility
  */
 pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPatternSets {
-    patterns.sort_by(|a, b| b.size.cmp(&a.size)); // descending: larger patterns first (less likely to be noise)
+    patterns.sort_by_key(|b| std::cmp::Reverse(b.size)); // descending: larger patterns first (less likely to be noise)
 
     let mut sets: MultiMap<String, FinderPatternSet> = MultiMap::new();
     let squaredDistance = |a: ConcentricPattern, b: ConcentricPattern| {
