@@ -18,6 +18,7 @@ use rxing_one_d_proc_derive::OneDWriter;
 
 use crate::{
     BarcodeFormat,
+    Exceptions,
     common::Result,
     oned::{
         oned_constants::{ean_13, upc_ean_shared},

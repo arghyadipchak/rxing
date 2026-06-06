@@ -16,7 +16,7 @@
 
 use rxing_one_d_proc_derive::OneDWriter;
 
-use crate::BarcodeFormat;
+use crate::{BarcodeFormat, Exceptions};
 use crate::common::Result;
 
 use super::{OneDimensionalCodeWriter, oned_constants::code_39};

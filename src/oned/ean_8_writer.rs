@@ -16,7 +16,7 @@
 
 use rxing_one_d_proc_derive::OneDWriter;
 
-use crate::{BarcodeFormat, common::Result, oned::upcean_common};
+use crate::{BarcodeFormat, Exceptions, common::Result, oned::upcean_common};
 
 use super::{OneDimensionalCodeWriter, UPCEANWriter, oned_constants::upc_ean_shared};
 

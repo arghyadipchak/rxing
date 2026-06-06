@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-use crate::BarcodeFormat;
+use crate::{BarcodeFormat, EncodeHints, Exceptions};
 use crate::common::Result;
 use crate::oned::telepen_common;
 use regex::Regex;
