@@ -79,7 +79,11 @@ impl<'a> FinderPatternFinder<'_> {
     pub fn find(&mut self, hints: &DecodeHints) -> Result<FinderPatternInfo> {
         let tryHarder = matches!(hints.TryHarder, Some(true));
         self.min_module_size = hints.MinimumModuleSize.unwrap_or(0) as f64;
-        let min_skip = if self.min_module_size > 1.0 { (3.0 * self.min_module_size) as u32 } else { Self::MIN_SKIP };
+        let min_skip = if self.min_module_size > 1.0 {
+            (3.0 * self.min_module_size) as u32
+        } else {
+            Self::MIN_SKIP
+        };
         let maxI = self.image.getHeight();
         let maxJ = self.image.getWidth();
         // We are looking for black/white/black/white/black modules in

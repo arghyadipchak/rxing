@@ -206,7 +206,9 @@ where
         for col in 0..output.width() {
             let mut sum = 0;
             for j in 0..3 {
-                sum += input.try_get(col + j, row.wrapping_sub(1)).unwrap_or_default() as u8
+                sum += input
+                    .try_get(col + j, row.wrapping_sub(1))
+                    .unwrap_or_default() as u8
                     + input.try_get(col + j, row).unwrap_or_default() as u8
                     + input.try_get(col + j, row + 1).unwrap_or_default() as u8;
             }
@@ -224,13 +226,13 @@ fn upscale_layer(source: &Luma8LuminanceSource, factor: u32) -> Option<Luma8Lumi
 
     let target_width = width * factor as usize;
     let target_height = height * factor as usize;
-    
+
     let mut resized_raw = vec![0u8; target_width * target_height];
 
     for y in 0..target_height {
         let src_y = (y as f64 + 0.5) / (factor as f64) - 0.5;
         let src_y = src_y.clamp(0.0, (height - 1) as f64);
-        
+
         let y0 = src_y.floor() as usize;
         let y1 = std::cmp::min(y0 + 1, height - 1);
         let ty = src_y - y0 as f64;

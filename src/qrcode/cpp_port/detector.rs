@@ -28,9 +28,9 @@ use crate::{
     common::{
         BitMatrix, PerspectiveTransform, Quadrilateral,
         cpp_essentials::{
-            BitMatrixCursorTrait, ConcentricPattern, Direction, EdgeTracer, FixedPattern,
-            FitSquareToPoints, GetPatternRowTP, IsPattern, LocateConcentricPattern, PatternRow, PatternType,
-            PatternView, ReadSymmetricPattern, RegressionLine, RegressionLineTrait,
+            BitMatrixCursorTrait, ConcentricPattern, Direction, EdgeTracer, FitSquareToPoints,
+            FixedPattern, GetPatternRowTP, IsPattern, LocateConcentricPattern, PatternRow,
+            PatternType, PatternView, ReadSymmetricPattern, RegressionLine, RegressionLineTrait,
         },
     },
 };
@@ -64,15 +64,24 @@ fn FindPattern(view: PatternView<'_>, min_module_size: f32) -> Result<PatternVie
             {
                 return false;
             }
-            IsPattern::<E2E, 5, 7, false>(view, &PATTERN, spaceInPixel, 0.1, 0.0, min_module_size) != 0.0
+            IsPattern::<E2E, 5, 7, false>(view, &PATTERN, spaceInPixel, 0.1, 0.0, min_module_size)
+                != 0.0
         },
     )
 }
 
 /// Locate the finder patterns for the symbol.
 /// This function can panic
-pub fn FindFinderPatterns(image: &BitMatrix, tryHarder: bool, min_module_size: u32) -> FinderPatterns {
-    let min_skip = if min_module_size > 1 { 3 * min_module_size } else { 3 }; // 1 pixel/module times 3 modules/center
+pub fn FindFinderPatterns(
+    image: &BitMatrix,
+    tryHarder: bool,
+    min_module_size: u32,
+) -> FinderPatterns {
+    let min_skip = if min_module_size > 1 {
+        3 * min_module_size
+    } else {
+        3
+    }; // 1 pixel/module times 3 modules/center
     const MAX_MODULES_FAST: u32 = 20 * 4 + 17; // support up to version 20 for mobile clients
 
     // Let's assume that the maximum version QR Code we support takes up 1/4 the height of the
@@ -151,10 +160,18 @@ fn spiral(radius: i32) -> impl Iterator<Item = (i32, i32)> {
         pts.push((0i32, 0i32));
     } else {
         let r = radius;
-        for x in -r..r { pts.push((x, -r)); }
-        for y in -r..r { pts.push((r, y)); }
-        for x in (-r + 1..=r).rev() { pts.push((x, r)); }
-        for y in (-r + 1..=r).rev() { pts.push((-r, y)); }
+        for x in -r..r {
+            pts.push((x, -r));
+        }
+        for y in -r..r {
+            pts.push((r, y));
+        }
+        for x in (-r + 1..=r).rev() {
+            pts.push((x, r));
+        }
+        for y in (-r + 1..=r).rev() {
+            pts.push((-r, y));
+        }
     }
     pts.into_iter()
 }
@@ -173,8 +190,7 @@ pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPattern
         // the camera projection on slanted symbols. The fact that the size of the finder pattern is proportional to the
         // distance from the camera is used here. This approximation only works if a < b < 2*a (see below).
         // Test image: fix-finderpattern-order.jpg
-        ConcentricPattern::dot(a - b, a - b) as f64
-            * (((b).size as f64) / ((a).size as f64)) // linear ratio (not squared) to avoid skewing cosine
+        ConcentricPattern::dot(a - b, a - b) as f64 * (((b).size as f64) / ((a).size as f64)) // linear ratio (not squared) to avoid skewing cosine
     };
 
     let cosUpper: f64 = (60.0_f64 / 180.0 * std::f64::consts::PI).cos();
@@ -188,9 +204,15 @@ pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPattern
 
     // Compute bounding box of all pattern centers
     let min_x = patterns.iter().map(|p| p.p.x).fold(f32::INFINITY, f32::min);
-    let max_x = patterns.iter().map(|p| p.p.x).fold(f32::NEG_INFINITY, f32::max);
+    let max_x = patterns
+        .iter()
+        .map(|p| p.p.x)
+        .fold(f32::NEG_INFINITY, f32::max);
     let min_y = patterns.iter().map(|p| p.p.y).fold(f32::INFINITY, f32::min);
-    let max_y = patterns.iter().map(|p| p.p.y).fold(f32::NEG_INFINITY, f32::max);
+    let max_y = patterns
+        .iter()
+        .map(|p| p.p.y)
+        .fold(f32::NEG_INFINITY, f32::max);
 
     // Bin size based on median pattern size; patterns are in descending size order
     let median_size = patterns[nb_patterns / 2].size;
@@ -291,7 +313,14 @@ pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPattern
                 }
 
                 let score = distAB + distBC + (distAB - distBC).abs();
-                sets.insert(score.to_string(), FinderPatternSet { bl: *a, tl: *b, tr: *c });
+                sets.insert(
+                    score.to_string(),
+                    FinderPatternSet {
+                        bl: *a,
+                        tl: *b,
+                        tr: *c,
+                    },
+                );
             }
         }
     }
@@ -613,9 +642,7 @@ pub fn SampleQR(image: &BitMatrix, fp: &FinderPatternSet) -> Result<QRCodeDetect
     }
 
     // otherwise the simple estimation used by upstream is used as a best guess fallback
-    if !image.is_in(br.p)
-        || FitSquareToPoints(image, fp.bl.p, fp.bl.size, 2, false).is_none()
-    {
+    if !image.is_in(br.p) || FitSquareToPoints(image, fp.bl.p, fp.bl.size, 2, false).is_none() {
         br = fp.tr - fp.tl + fp.bl;
         brOffset = point_i(0, 0);
     }

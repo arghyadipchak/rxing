@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-use crate::{BarcodeFormat, EncodeHints, Exceptions};
 use crate::common::Result;
 use crate::oned::telepen_common;
+use crate::{BarcodeFormat, EncodeHints, Exceptions};
 use regex::Regex;
 use rxing_one_d_proc_derive::OneDWriter;
 

@@ -639,8 +639,14 @@ pub fn FindLeftGuard<'a, const LEN: usize, const SUM: usize, const IS_SPARCE: bo
         {
             return false;
         }
-        IsPattern::<false, LEN, SUM, IS_SPARCE>(window, pattern, spaceInPixel, minQuietZone, 0.0, 0.0)
-            != 0.0
+        IsPattern::<false, LEN, SUM, IS_SPARCE>(
+            window,
+            pattern,
+            spaceInPixel,
+            minQuietZone,
+            0.0,
+            0.0,
+        ) != 0.0
     })
 }
 

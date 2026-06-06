@@ -221,7 +221,11 @@ impl<'a> MultiFinderPatternFinder<'_> {
         let tryHarder = hints.TryHarder.unwrap_or(false);
         let min_module_size = hints.MinimumModuleSize.unwrap_or(0) as f64;
         self.0.min_module_size = min_module_size;
-        let min_skip = if min_module_size > 1.0 { (3.0 * min_module_size) as u32 } else { FinderPatternFinder::MIN_SKIP };
+        let min_skip = if min_module_size > 1.0 {
+            (3.0 * min_module_size) as u32
+        } else {
+            FinderPatternFinder::MIN_SKIP
+        };
         let image = self.0.getImage().clone();
         let maxI = image.getHeight();
         let maxJ = image.getWidth();

@@ -760,7 +760,8 @@ fn issue_83_subtract_with_overflow() {
         .unwrap()
         .read_to_end(&mut data)
         .unwrap();
-    rxing::helpers::detect_multiple_in_luma_with_hints(data, 75, 80, &mut hints).unwrap_or_default();
+    rxing::helpers::detect_multiple_in_luma_with_hints(data, 75, 80, &mut hints)
+        .unwrap_or_default();
 }
 
 #[cfg(all(feature = "image", feature = "multi_barcode_readers"))]
@@ -775,4 +776,3 @@ fn test_zero_size_image_issue_86() {
     let res = rxing::helpers::detect_multiple_in_luma_with_hints(data, 0, 0, &mut hints);
     assert!(res.is_err());
 }
-
