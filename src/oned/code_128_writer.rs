@@ -160,19 +160,17 @@ fn check(contents: &str, hints: &crate::EncodeHints) -> Result<i32> {
                     )));
                 }
             }
-            CODE_CODE_C_I32 =>
             // allows only numbers and no FNC 2/3/4
-            {
-                if c < 48
+            CODE_CODE_C_I32
+                if (c < 48
                     || (c > 57 && c <= 127)
                     || ch == ESCAPE_FNC_2
                     || ch == ESCAPE_FNC_3
-                    || ch == ESCAPE_FNC_4
-                {
-                    return Err(Exceptions::illegal_argument_with(format!(
-                        "Bad character in input for forced code set C: ASCII value={c}"
-                    )));
-                }
+                    || ch == ESCAPE_FNC_4) =>
+            {
+                return Err(Exceptions::illegal_argument_with(format!(
+                    "Bad character in input for forced code set C: ASCII value={c}"
+                )));
             }
             _ => {}
         }

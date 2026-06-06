@@ -540,8 +540,8 @@ fn decodeTextSegment(
                     }
                     shift = 0;
                 }
-                3 => {
-                    if cValue < TEXT_SHIFT3_SET_CHARS.len() as u32 {
+                3
+                    if cValue < TEXT_SHIFT3_SET_CHARS.len() as u32 => {
                         let textChar = TEXT_SHIFT3_SET_CHARS[cValue as usize];
                         if upperShift {
                             result.append_char(
@@ -552,10 +552,7 @@ fn decodeTextSegment(
                             result.append_char(textChar);
                         }
                         shift = 0;
-                    } else {
-                        return Err(Exceptions::FORMAT);
                     }
-                }
 
                 _ => return Err(Exceptions::FORMAT),
             }
