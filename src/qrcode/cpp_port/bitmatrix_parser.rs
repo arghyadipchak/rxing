@@ -169,7 +169,7 @@ pub fn ReadQRCodewords(
                     // If we've made a whole byte, save it off
                     bitsRead += 1;
                     if bitsRead % 8 == 0 {
-                        result.push(std::mem::take(&mut currentByte));
+                        result.push(std::mem::take(&mut currentByte) as u8);
                     }
                 }
             }
@@ -182,7 +182,7 @@ pub fn ReadQRCodewords(
         return Err(Exceptions::FORMAT);
     }
 
-    Ok(result.iter().copied().map(|x| x as u8).collect())
+    Ok(result)
 }
 
 pub fn ReadMQRCodewords(
@@ -233,7 +233,7 @@ pub fn ReadMQRCodewords(
                     if bitsRead == 8
                         || (bitsRead == 4 && hasD4mBlock && (result.len()) == d4mBlockIndex - 1)
                     {
-                        result.push(std::mem::take(&mut currentByte));
+                        result.push(std::mem::take(&mut currentByte) as u8);
                         bitsRead = 0;
                     }
                 }
@@ -247,7 +247,7 @@ pub fn ReadMQRCodewords(
         return Err(Exceptions::FORMAT);
     }
 
-    Ok(result.iter().copied().map(|x| x as u8).collect())
+    Ok(result)
 }
 
 pub fn ReadQRCodewordsModel1(
@@ -286,7 +286,7 @@ pub fn ReadQRCodewordsModel1(
                             ),
                     );
                 }
-                result.push(currentByte);
+                result.push(currentByte as u8);
             }
         } else if columns - j <= 4 {
             // vertical symbols on the left side
@@ -309,7 +309,7 @@ pub fn ReadQRCodewordsModel1(
                             ),
                     );
                 }
-                result.push(currentByte);
+                result.push(currentByte as u8);
             }
         } else {
             // horizontal symbols
@@ -342,7 +342,7 @@ pub fn ReadQRCodewordsModel1(
                             ),
                     );
                 }
-                result.push(currentByte);
+                result.push(currentByte as u8);
             }
         }
     }
@@ -352,7 +352,7 @@ pub fn ReadQRCodewordsModel1(
         return Err(Exceptions::FORMAT);
     }
 
-    Ok(result.iter().copied().map(|x| x as u8).collect())
+    Ok(result)
 }
 
 pub fn ReadRMQRCodewords(
@@ -391,7 +391,7 @@ pub fn ReadRMQRCodewords(
                     bitsRead += 1;
                     if bitsRead % 8 == 0 {
                         // if (++bitsRead % 8 == 0){
-                        result.push(currentByte);
+                        result.push(currentByte as u8);
                         currentByte = 0;
                     }
                 }
@@ -405,7 +405,7 @@ pub fn ReadRMQRCodewords(
         return Err(Exceptions::FORMAT);
     }
 
-    Ok(result.iter().copied().map(|x| x as u8).collect())
+    Ok(result)
 }
 
 pub fn ReadCodewords(
