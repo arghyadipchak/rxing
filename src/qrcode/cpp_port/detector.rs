@@ -21,7 +21,6 @@ use crate::{
         detector::QRCodeDetectorResult,
     },
 };
-use multimap::MultiMap;
 
 use crate::{
     Point,
@@ -184,7 +183,7 @@ fn spiral(radius: i32) -> impl Iterator<Item = (i32, i32)> {
 pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPatternSets {
     patterns.sort_by_key(|b| std::cmp::Reverse(b.size)); // descending: larger patterns first (less likely to be noise)
 
-    let mut sets: MultiMap<String, FinderPatternSet> = MultiMap::new();
+    let mut sets: Vec<(f64, FinderPatternSet)> = Vec::new();
     let squaredDistance = |a: ConcentricPattern, b: ConcentricPattern| {
         // The scaling of the distance by the b/a size ratio is a very coarse compensation for the shortening effect of
         // the camera projection on slanted symbols. The fact that the size of the finder pattern is proportional to the
@@ -312,30 +311,24 @@ pub fn GenerateFinderPatternSets(patterns: &mut FinderPatterns) -> FinderPattern
                     std::mem::swap(&mut a, &mut c);
                 }
 
+                // first order approximation of plausibility (lower = more plausible)
                 let score = distAB + distBC + (distAB - distBC).abs();
-                sets.insert(
-                    score.to_string(),
+                sets.push((
+                    score,
                     FinderPatternSet {
                         bl: *a,
                         tl: *b,
                         tr: *c,
                     },
-                );
+                ));
             }
         }
     }
 
-    // convert from multimap to vector
-    let mut res: FinderPatternSets = Vec::with_capacity(sets.len());
+    // ascending score: most plausible sets first
+    sets.sort_by(|a, b| a.0.total_cmp(&b.0));
 
-    for (_, v) in sets {
-        // for (auto& [d, s] : sets)
-        res.extend(v);
-    }
-
-    res.sort_by_key(|i| i.bl.size);
-
-    res
+    sets.into_iter().map(|(_, s)| s).collect()
 }
 
 pub fn EstimateModuleSize(image: &BitMatrix, a: ConcentricPattern, b: ConcentricPattern) -> f64 {

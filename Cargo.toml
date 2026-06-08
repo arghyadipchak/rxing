@@ -33,7 +33,6 @@ svg = {version = "0.18", optional = true}
 resvg = {version = "0.45", optional = true, default-features=false}
 serde = { version = "1", features = ["derive", "rc"], optional = true }
 thiserror = "2.0"
-multimap = {version="0.10", optional = true}
 
 [dev-dependencies]
 java-properties = "2.0"
@@ -101,7 +100,7 @@ aztec = []
 maxicode = []
 
 #//// Enable support for QR Code barcodes
-qrcode = ["dep:multimap"]
+qrcode = []
 
 #//// Enable support for Data Matrix barcodes
 datamatrix = []
